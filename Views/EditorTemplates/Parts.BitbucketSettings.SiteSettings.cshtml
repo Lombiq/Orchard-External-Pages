@@ -1,0 +1,31 @@
+﻿@model OrchardHUN.Bitbucket.Models.BitbucketSettingsPart
+@{
+    Script.Require("jQuery").AtFoot();
+    Layout.Title = T("Bitbucket Settings").Text;
+}
+
+<fieldset>
+    <legend>@T("Bitbucket Settings")</legend>
+    <ol>
+        @for (int i = 0; i < Model.Repositories.Count; i++)
+        {
+            <li class="orchardhun-bitbucket-existing-repository">
+                @Html.EditorFor(m => m.Repositories[i])
+            </li>
+        }
+        <li>
+            @Html.EditorFor(m => m.NewRepository)
+        </li>
+    </ol>
+    <span class="hint">@T("Repositories with no username and password defined will only work if they're public.")</span>
+</fieldset>
+
+@using (Script.Foot())
+{
+    <script type="text/javascript">
+        (function ($) {
+            $(".orchardhun-bitbucket-existing-repository .orchardhun-bitbucket-repository-settings legend")
+                .expandoControl(function (controller) { return controller.next("div"); }, { collapse: true, remember: false });
+        })(jQuery);
+    </script>
+}

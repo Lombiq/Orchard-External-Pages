@@ -7,4 +7,7 @@ OrchardVersion: 1.6
 Description: Description for the module
 Features:
     OrchardHUN.Bitbucket:
+		Name: Orchard Bitbucket
         Description: Description for feature OrchardHUN.Bitbucket.
+		Category: Content
+		Dependencies: Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title

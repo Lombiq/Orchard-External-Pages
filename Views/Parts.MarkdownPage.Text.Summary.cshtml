@@ -1,0 +1,23 @@
+﻿@{
+    var part = (OrchardHUN.Bitbucket.Models.MarkdownPagePart)Model.ContentPart;
+
+    var html = part.Html;
+    var more = html.IndexOf("<!--more-->");
+    if (more != -1)
+    {
+        html = html.Substring(0, more);
+    }
+    else
+    {
+        var firstP = html.IndexOf("<p>");
+        var firstSlashP = html.IndexOf("</p>");
+        if (firstP >= 0 && firstSlashP > firstP)
+        {
+            html = html.Substring(firstP, firstSlashP + 4 - firstP);
+        }
+    }
+}
+
+@(new HtmlString(html))
+
+<p>@Html.ItemDisplayLink(T("more").Text, (Orchard.ContentManagement.ContentItem)Model.ContentItem)</p>

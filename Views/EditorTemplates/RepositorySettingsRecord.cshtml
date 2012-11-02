@@ -1,0 +1,58 @@
+﻿@model OrchardHUN.Bitbucket.Models.RepositorySettingsRecord
+<fieldset class="orchardhun-bitbucket-repository-settings">
+    <legend>
+        @if (!String.IsNullOrEmpty(Model.AccountName))
+        {
+            @Model.AccountName<text>/</text>@Model.Slug
+        }
+        else
+        {
+            @T("New repository")
+        }
+    </legend>
+    <div>
+        @Html.HiddenFor(m => m.Id)
+        @if (Model.Id != 0)
+        {
+            @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "Admin", new { Area = "OrchardHUN.Bitbucket", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
+            <span class="hint">@T("Deleting the repository only prevents further updating but all the existing local data remains.")</span>
+        }
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.AccountName, T("Account name"))
+                @Html.TextBoxFor(m => m.AccountName, new { @class = "text singleline" })
+                @Html.ValidationMessageFor(m => m.AccountName)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Slug, T("Slug"))
+                @Html.TextBoxFor(m => m.Slug, new { @class = "text singleline" })
+                @Html.ValidationMessageFor(m => m.Slug)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Username, T("Username"))
+                @Html.TextBoxFor(m => m.Username, new { @class = "text singleline" })
+                @Html.ValidationMessageFor(m => m.Username)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Password, T("Password"))
+                @Html.PasswordFor(m => m.Password, new { @class = "text singleline" })
+                @Html.ValidationMessageFor(m => m.Password)
+            </li>
+            <li>
+                @Html.EditorFor(m => m.MirrorFiles)
+                <label for="@Html.FieldIdFor(m => m.MirrorFiles)" class="forcheckbox">@T("Mirror files")</label>
+                @Html.ValidationMessageFor(m => m.MirrorFiles)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.MaximalFileSizeKB, T("Maximal file size (in KB)"))
+                @Html.TextBoxFor(m => m.MaximalFileSizeKB, new { @class = "text-small" })
+                @Html.ValidationMessageFor(m => m.MaximalFileSizeKB)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.UrlMappingsDefinition, T("Url mappings"))
+                @Html.TextAreaFor(m => m.UrlMappingsDefinition, new { @class = "text" })
+                @Html.ValidationMessageFor(m => m.UrlMappingsDefinition)
+            </li>
+        </ol>
+    </div>
+</fieldset>
