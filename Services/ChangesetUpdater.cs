@@ -66,12 +66,7 @@ namespace OrchardHUN.Bitbucket.Services
 
         private void CreateTask()
         {
-            // Checking if there are tasks with the same type scheduled in the future.
-            var outdatedTaskCount = _scheduledTaskManager.GetTasks(TaskType, _clock.UtcNow).Count();
-            var taskCount = _scheduledTaskManager.GetTasks(TaskType).Count();
-            if (taskCount != 0 && taskCount - outdatedTaskCount > 0) return;
-
-            _scheduledTaskManager.CreateTask(TaskType, _clock.UtcNow.AddMinutes(1), null); 
+            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(10), null); 
         }
     }
 }
