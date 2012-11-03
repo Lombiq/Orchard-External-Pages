@@ -113,7 +113,9 @@
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="Services\BitbucketService.cs" />
+    <Compile Include="Services\ChangesetUpdater.cs" />
     <Compile Include="Services\IBitbucketService.cs" />
+    <Compile Include="WellKnownConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Parts.MarkdownPage.Title.cshtml" />

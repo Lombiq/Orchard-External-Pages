@@ -45,7 +45,8 @@ namespace OrchardHUN.Bitbucket
                     .Column<string>("Password")
                     .Column<bool>("MirrorFiles")
                     .Column<int>("MaximalFileSizeKB")
-                    .Column<string>("UrlMappingsDefinition", column => column.Unlimited())
+                    .Column<string>("UrlMappingsDefinition")
+                    .Column<string>("LastNode")
                 );
 
 

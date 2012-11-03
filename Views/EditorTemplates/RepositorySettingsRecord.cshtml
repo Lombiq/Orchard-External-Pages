@@ -50,8 +50,9 @@
             </li>
             <li>
                 @Html.LabelFor(m => m.UrlMappingsDefinition, T("Url mappings"))
-                @Html.TextAreaFor(m => m.UrlMappingsDefinition, new { @class = "text" })
+                @Html.TextAreaFor(m => m.UrlMappingsDefinition, new { @class = "text singleline" })
                 @Html.ValidationMessageFor(m => m.UrlMappingsDefinition)
+                <span class="hint">@T("Write mappings between the path of a document folder in the repo and the root url of the corresponding document items here, separated with a colon, one per line. Sample: Folder/In/Repo: LocalRoot|Another/Folder/In/Repo: OtherLocalRoot.")</span>
             </li>
         </ol>
     </div>

@@ -9,6 +9,6 @@ namespace OrchardHUN.Bitbucket.Services
 {
     public interface IBitbucketService : IDependency
     {
-        void CheckChangesets(IRepositorySettings settings);
+        void CheckChangesets(int repositoryId);
     }
 }

@@ -20,6 +20,8 @@ namespace OrchardHUN.Bitbucket.Models
         [StringLengthMax]
         public virtual string UrlMappingsDefinition { get; set; }
 
+        public virtual string LastNode { get; set; }
+
         public RepositorySettingsRecord()
         {
             MaximalFileSizeKB = 1024;
@@ -41,8 +43,8 @@ namespace OrchardHUN.Bitbucket.Models
                     if (sides.Length == 2)
                     {
                         var mapping = new UrlMapping();
-                        mapping.RepoUrl = sides.First().Trim();
-                        mapping.LocalUrl = sides.Last().Trim();
+                        mapping.RepoPath = sides.First().Trim().Trim('/');
+                        mapping.LocalPath = sides.Last().Trim().Trim('/');
                         mappings.Add(mapping);
                     }
                 }
@@ -53,7 +55,7 @@ namespace OrchardHUN.Bitbucket.Models
 
     public class UrlMapping
     {
-        public string LocalUrl { get; set; }
-        public string RepoUrl { get; set; }
+        public string LocalPath { get; set; }
+        public string RepoPath { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace OrchardHUN.Bitbucket.Controllers
 
         public void Index()
         {
-            //_bitbucketService.UpdateLocalPages(_siteService.GetSiteSettings().As<IIBitbucketSettingsAspect>());
+            _bitbucketService.CheckChangesets(1);
         }
     }
 }
