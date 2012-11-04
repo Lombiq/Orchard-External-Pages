@@ -106,14 +106,15 @@
     <Compile Include="Drivers\MarkdownPagePartDriver.cs" />
     <Compile Include="Handlers\BitbucketSettingsPartHandler.cs" />
     <Compile Include="Handlers\MarkdownPagePartHandler.cs" />
-    <Compile Include="Migrations.cs" />
-    <Compile Include="Models\RepositorySettingsRecord.cs" />
+    <Compile Include="Migrations\BaseMigrations.cs" />
+    <Compile Include="Migrations\BitbucketMigrations.cs" />
+    <Compile Include="Models\BitbucketRepositorySettingsRecord.cs" />
     <Compile Include="Models\BitbucketSettingsPart.cs" />
     <Compile Include="Models\IRepositorySettings.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="Services\BitbucketService.cs" />
-    <Compile Include="Services\ChangesetUpdater.cs" />
+    <Compile Include="Services\BitbucketChangesetUpdater.cs" />
     <Compile Include="Services\IBitbucketService.cs" />
     <Compile Include="WellKnownConstants.cs" />
   </ItemGroup>
@@ -130,8 +131,9 @@
     <Content Include="Views\Parts.MarkdownPage.Text.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\EditorTemplates\RepositorySettingsRecord.cshtml" />
+    <Content Include="Views\EditorTemplates\BitbucketRepositorySettingsRecord.cshtml" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
