@@ -7,6 +7,7 @@ using Orchard.Environment;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
 using OrchardHUN.Bitbucket.Models;
+using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 
@@ -17,19 +18,19 @@ namespace OrchardHUN.Bitbucket.Services
         private const string TaskType = "OrchardHUN.Bitbucket.ChangesetUpdate";
 
         private readonly IBitbucketService _bitbucketService;
-        private readonly ILockFileManager _lockFileManager;
+        private readonly IResolve<ILockFile> _lockFileResolve;
         private readonly IScheduledTaskManager _scheduledTaskManager;
         private readonly IClock _clock;
 
 
         public BitbucketChangesetUpdater(
             IBitbucketService bitbucketService,
-            ILockFileManager lockFileManager,
+            IResolve<ILockFile> lockFileResolve,
             IScheduledTaskManager scheduledTaskManager,
             IClock clock)
         {
             _bitbucketService = bitbucketService;
-            _lockFileManager = lockFileManager;
+            _lockFileResolve = lockFileResolve;
             _scheduledTaskManager = scheduledTaskManager;
             _clock = clock;
         }
@@ -39,9 +40,9 @@ namespace OrchardHUN.Bitbucket.Services
         {
             if (context.Task.TaskType != TaskType) return;
 
-            using (var lockFile = _lockFileManager.TryAcquireLock(TaskType, 0))
+            using (var lockFile = _lockFileResolve.Value)
             {
-                if (lockFile == null) return;
+                if (!lockFile.TryAcquire(TaskType)) return;
 
                 foreach (var repository in _bitbucketService.SettingsRepository.Table)
                 {

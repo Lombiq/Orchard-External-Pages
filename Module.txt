@@ -10,4 +10,4 @@ Features:
 		Name: Orchard Bitbucket
         Description: Description for feature OrchardHUN.Bitbucket.
 		Category: Content
-		Dependencies: Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title
+		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title
