@@ -16,6 +16,8 @@ namespace OrchardHUN.Bitbucket.Services
         private readonly IJobManager _jobManager;
         private readonly IContentManager _contentManager;
 
+        public IRepository<RepositorySettingsRecord> SettingsRepository { get { return _repository; } }
+
 
         public BitbucketService(
             IRepository<RepositorySettingsRecord> repository,

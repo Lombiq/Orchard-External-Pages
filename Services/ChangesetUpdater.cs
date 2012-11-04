@@ -16,7 +16,6 @@ namespace OrchardHUN.Bitbucket.Services
     {
         private const string TaskType = "OrchardHUN.Bitbucket.ChangesetUpdate";
 
-        private readonly IRepository<RepositorySettingsRecord> _repository;
         private readonly IBitbucketService _bitbucketService;
         private readonly ILockFileManager _lockFileManager;
         private readonly IScheduledTaskManager _scheduledTaskManager;
@@ -24,13 +23,11 @@ namespace OrchardHUN.Bitbucket.Services
 
 
         public ChangesetUpdater(
-            IRepository<RepositorySettingsRecord> repository,
             IBitbucketService bitbucketService,
             ILockFileManager lockFileManager,
             IScheduledTaskManager scheduledTaskManager,
             IClock clock)
         {
-            _repository = repository;
             _bitbucketService = bitbucketService;
             _lockFileManager = lockFileManager;
             _scheduledTaskManager = scheduledTaskManager;
@@ -46,7 +43,7 @@ namespace OrchardHUN.Bitbucket.Services
             {
                 if (lockFile == null) return;
 
-                foreach (var repository in _repository.Table)
+                foreach (var repository in _bitbucketService.SettingsRepository.Table)
                 {
                     _bitbucketService.CheckChangesets(repository.Id);
                 }
