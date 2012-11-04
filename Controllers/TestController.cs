@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Orchard.Settings;
 using OrchardHUN.ExternalPages.Services;
-using RestSharp;
-using Orchard.ContentManagement;
-using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Controllers
 {

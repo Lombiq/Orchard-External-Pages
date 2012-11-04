@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Orchard.ContentManagement.MetaData;
-using Orchard.Core.Contents.Extensions;
-using Orchard.Data.Migration;
+﻿using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 

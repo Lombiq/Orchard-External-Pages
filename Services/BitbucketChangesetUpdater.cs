@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Orchard.Data;
-using Orchard.Environment;
+﻿using Orchard.Environment;
 using Orchard.Environment.Extensions;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
-using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
-using Piedone.HelpfulLibraries.Tasks.Jobs;
 
 namespace OrchardHUN.ExternalPages.Services
 {

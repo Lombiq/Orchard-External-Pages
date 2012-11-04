@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Orchard.ContentManagement.Records;
+﻿using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
 namespace OrchardHUN.ExternalPages.Models

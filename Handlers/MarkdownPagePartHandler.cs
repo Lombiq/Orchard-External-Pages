@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using MarkdownSharp;
+﻿using MarkdownSharp;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using OrchardHUN.ExternalPages.Models;
