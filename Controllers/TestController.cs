@@ -4,12 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Orchard.Settings;
-using OrchardHUN.Bitbucket.Services;
+using OrchardHUN.ExternalPages.Services;
 using RestSharp;
 using Orchard.ContentManagement;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Controllers
+namespace OrchardHUN.ExternalPages.Controllers
 {
     public class TestController : Controller
     {

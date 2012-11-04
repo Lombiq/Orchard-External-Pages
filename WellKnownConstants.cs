@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace OrchardHUN.Bitbucket
+namespace OrchardHUN.ExternalPages
 {
     internal class WellKnownConstants
     {
-        public const string JobIndustry = "OrchardHUN.Bitbucket";
+        public const string JobIndustry = "OrchardHUN.ExternalPages";
     }
 }

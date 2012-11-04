@@ -6,7 +6,7 @@ using System.Web;
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
-namespace OrchardHUN.Bitbucket.Models
+namespace OrchardHUN.ExternalPages.Models
 {
     public class MarkdownPagePartRecord : ContentPartRecord
     {

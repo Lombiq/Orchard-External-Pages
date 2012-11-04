@@ -6,9 +6,9 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Drivers
+namespace OrchardHUN.ExternalPages.Drivers
 {
     public class BitbucketSettingsPartDriver : ContentPartDriver<BitbucketSettingsPart>
     {
@@ -16,7 +16,7 @@ namespace OrchardHUN.Bitbucket.Drivers
 
         protected override string Prefix
         {
-            get { return "OrchardHUN.Bitbucket.BitbucketSettingsPart"; }
+            get { return "OrchardHUN.ExternalPages.BitbucketSettingsPart"; }
         }
 
 

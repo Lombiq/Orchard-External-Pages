@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Orchard;
 using Orchard.Data;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Services
+namespace OrchardHUN.ExternalPages.Services
 {
     public interface IBitbucketService : IDependency
     {

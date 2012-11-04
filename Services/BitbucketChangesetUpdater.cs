@@ -6,16 +6,16 @@ using Orchard.Data;
 using Orchard.Environment;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 
-namespace OrchardHUN.Bitbucket.Services
+namespace OrchardHUN.ExternalPages.Services
 {
     public class BitbucketChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents
     {
-        private const string TaskType = "OrchardHUN.Bitbucket.ChangesetUpdate";
+        private const string TaskType = "OrchardHUN.ExternalPages.BitbucketChangesetUpdate";
 
         private readonly IBitbucketService _bitbucketService;
         private readonly IResolve<ILockFile> _lockFileResolve;

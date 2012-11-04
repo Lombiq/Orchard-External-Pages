@@ -1,13 +1,13 @@
-﻿Name: Orchard Bitbucket
+﻿Name: External Pages
 AntiForgery: enabled
 Author: The Orchard Hungary Team
-Website: http://orchardscriptingext.codeplex.com
+Website: http://orchardexternalpages.codeplex.com
 Version: 1.0
 OrchardVersion: 1.6
 Description: Description for the module
 Features:
-    OrchardHUN.Bitbucket:
-		Name: Orchard Bitbucket
-        Description: Description for feature OrchardHUN.Bitbucket.
+    OrchardHUN.ExternalPages:
+		Name: External Pages
+        Description: Description for feature OrchardHUN.ExternalPages.
 		Category: Content
 		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title

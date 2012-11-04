@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Orchard.ContentManagement;
 
-namespace OrchardHUN.Bitbucket.Models
+namespace OrchardHUN.ExternalPages.Models
 {
     public interface IRepositorySettings
     {

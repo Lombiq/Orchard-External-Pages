@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using Orchard.Data.Conventions;
 
-namespace OrchardHUN.Bitbucket.Models
+namespace OrchardHUN.ExternalPages.Models
 {
     public class BitbucketRepositorySettingsRecord
     {

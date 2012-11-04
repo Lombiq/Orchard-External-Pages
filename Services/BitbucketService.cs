@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 using Orchard.ContentManagement;
 using Orchard.Data;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 using RestSharp;
 
-namespace OrchardHUN.Bitbucket.Services
+namespace OrchardHUN.ExternalPages.Services
 {
     public class BitbucketService : IBitbucketService
     {

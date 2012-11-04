@@ -5,7 +5,7 @@ using System.Web;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Utilities;
 
-namespace OrchardHUN.Bitbucket.Models
+namespace OrchardHUN.ExternalPages.Models
 {
     public class BitbucketSettingsPart : ContentPart
     {

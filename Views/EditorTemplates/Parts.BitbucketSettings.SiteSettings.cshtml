@@ -1,4 +1,4 @@
-﻿@model OrchardHUN.Bitbucket.Models.BitbucketSettingsPart
+﻿@model OrchardHUN.ExternalPages.Models.BitbucketSettingsPart
 @{
     Script.Require("jQuery").AtFoot();
 }
@@ -8,7 +8,7 @@
     <ol>
         @for (int i = 0; i < Model.Repositories.Count; i++)
         {
-            <li class="orchardhun-bitbucket-existing-repository">
+            <li class="orchardhun-external-pages-bitbucket-existing-repository">
                 @Html.EditorFor(m => m.Repositories[i])
             </li>
         }
@@ -23,7 +23,7 @@
 {
     <script type="text/javascript">
         (function ($) {
-            $(".orchardhun-bitbucket-existing-repository .orchardhun-bitbucket-repository-settings legend")
+            $(".orchardhun-external-pages-bitbucket-existing-repository .orchardhun-external-pages-bitbucket-repository-settings legend")
                 .expandoControl(function (controller) { return controller.next("div"); }, { collapse: true, remember: false });
         })(jQuery);
     </script>

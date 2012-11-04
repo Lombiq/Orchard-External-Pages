@@ -1,6 +1,6 @@
-﻿@model OrchardHUN.Bitbucket.Models.BitbucketRepositorySettingsRecord
+﻿@model OrchardHUN.ExternalPages.Models.BitbucketRepositorySettingsRecord
 
-<fieldset class="orchardhun-bitbucket-repository-settings">
+<fieldset class="orchardhun-external-pages-bitbucket-repository-settings">
     <legend>
         @if (!String.IsNullOrEmpty(Model.AccountName))
         {
@@ -15,7 +15,7 @@
         @Html.HiddenFor(m => m.Id)
         @if (Model.Id != 0)
         {
-            @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "Admin", new { Area = "OrchardHUN.Bitbucket", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
+            @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
             <span class="hint">@T("Deleting the repository only prevents further updating but all the existing local data remains.")</span>
         }
         <ol>

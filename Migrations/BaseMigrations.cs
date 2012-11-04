@@ -6,9 +6,9 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Migrations
+namespace OrchardHUN.ExternalPages.Migrations
 {
     public class BaseMigrations : DataMigrationImpl
     {

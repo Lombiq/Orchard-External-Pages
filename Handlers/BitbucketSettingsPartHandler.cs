@@ -7,9 +7,9 @@ using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment;
 using Orchard.Localization;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Handlers
+namespace OrchardHUN.ExternalPages.Handlers
 {
     public class BitbucketSettingsPartHandler : ContentHandler
     {

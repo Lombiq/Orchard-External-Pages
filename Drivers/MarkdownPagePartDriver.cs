@@ -5,15 +5,15 @@ using System.Web;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.Bitbucket.Drivers
+namespace OrchardHUN.ExternalPages.Drivers
 {
     public class MarkdownPagePartDriver : ContentPartDriver<MarkdownPagePart>
     {
         protected override string Prefix
         {
-            get { return "OrchardHUN.Bitbucket.MarkdownPagePart"; }
+            get { return "OrchardHUN.ExternalPages.MarkdownPagePart"; }
         }
 
 

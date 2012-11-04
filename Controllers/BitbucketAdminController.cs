@@ -7,22 +7,23 @@ using Orchard.Data;
 using Orchard.Localization;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
-using OrchardHUN.Bitbucket.Models;
+using OrchardHUN.ExternalPages.Models;
+using OrchardHUN.ExternalPages.Services;
 
-namespace OrchardHUN.Bitbucket.Controllers
+namespace OrchardHUN.ExternalPages.Controllers
 {
     [Admin]
-    public class AdminController : Controller
+    public class BitbucketAdminController : Controller
     {
-        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
+        private readonly IBitbucketService _bitbucketService;
         private readonly INotifier _notifier;
 
         public Localizer T { get; set; }
 
 
-        public AdminController(IRepository<BitbucketRepositorySettingsRecord> repository, INotifier notifier)
+        public BitbucketAdminController(IBitbucketService bitbucketService, INotifier notifier)
         {
-            _repository = repository;
+            _bitbucketService = bitbucketService;
             _notifier = notifier;
 
             T = NullLocalizer.Instance;
@@ -32,8 +33,10 @@ namespace OrchardHUN.Bitbucket.Controllers
         [HttpPost]
         public ActionResult DeleteRepository(int id, string returnUrl)
         {
-            var record = _repository.Get(id);
-            if (record != null) _repository.Delete(record);
+            var settingsRepository = _bitbucketService.SettingsRepository;
+
+            var record = settingsRepository.Get(id);
+            if (record != null) settingsRepository.Delete(record);
 
             _notifier.Information(T("Repository deleted."));
 
