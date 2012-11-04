@@ -110,7 +110,6 @@
     <Compile Include="Migrations\BitbucketMigrations.cs" />
     <Compile Include="Models\BitbucketRepositorySettingsRecord.cs" />
     <Compile Include="Models\BitbucketSettingsPart.cs" />
-    <Compile Include="Models\IRepositorySettings.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="Services\BitbucketService.cs" />
