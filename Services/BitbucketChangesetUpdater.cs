@@ -12,7 +12,7 @@ using Piedone.HelpfulLibraries.Tasks.Jobs;
 
 namespace OrchardHUN.Bitbucket.Services
 {
-    public class ChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents
+    public class BitbucketChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents
     {
         private const string TaskType = "OrchardHUN.Bitbucket.ChangesetUpdate";
 
@@ -22,7 +22,7 @@ namespace OrchardHUN.Bitbucket.Services
         private readonly IClock _clock;
 
 
-        public ChangesetUpdater(
+        public BitbucketChangesetUpdater(
             IBitbucketService bitbucketService,
             ILockFileManager lockFileManager,
             IScheduledTaskManager scheduledTaskManager,

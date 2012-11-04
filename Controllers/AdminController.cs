@@ -14,13 +14,13 @@ namespace OrchardHUN.Bitbucket.Controllers
     [Admin]
     public class AdminController : Controller
     {
-        private readonly IRepository<RepositorySettingsRecord> _repository;
+        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
         private readonly INotifier _notifier;
 
         public Localizer T { get; set; }
 
 
-        public AdminController(IRepository<RepositorySettingsRecord> repository, INotifier notifier)
+        public AdminController(IRepository<BitbucketRepositorySettingsRecord> repository, INotifier notifier)
         {
             _repository = repository;
             _notifier = notifier;

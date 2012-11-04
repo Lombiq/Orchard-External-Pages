@@ -12,15 +12,15 @@ namespace OrchardHUN.Bitbucket.Services
 {
     public class BitbucketService : IBitbucketService
     {
-        private readonly IRepository<RepositorySettingsRecord> _repository;
+        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
         private readonly IJobManager _jobManager;
         private readonly IContentManager _contentManager;
 
-        public IRepository<RepositorySettingsRecord> SettingsRepository { get { return _repository; } }
+        public IRepository<BitbucketRepositorySettingsRecord> SettingsRepository { get { return _repository; } }
 
 
         public BitbucketService(
-            IRepository<RepositorySettingsRecord> repository,
+            IRepository<BitbucketRepositorySettingsRecord> repository,
             IJobManager jobManager,
             IContentManager contentManager)
         {
@@ -117,7 +117,7 @@ namespace OrchardHUN.Bitbucket.Services
         }
 
 
-        private RepositorySettingsRecord GetRepositoryOrThrow(int id)
+        private BitbucketRepositorySettingsRecord GetRepositoryOrThrow(int id)
         {
             var repository = _repository.Get(id);
             if (repository == null) throw new ArgumentException("No repository exists with the following id: " + id);

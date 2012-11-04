@@ -12,7 +12,7 @@ namespace OrchardHUN.Bitbucket.Drivers
 {
     public class BitbucketSettingsPartDriver : ContentPartDriver<BitbucketSettingsPart>
     {
-        private readonly IRepository<RepositorySettingsRecord> _repository;
+        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
 
         protected override string Prefix
         {
@@ -20,7 +20,7 @@ namespace OrchardHUN.Bitbucket.Drivers
         }
 
 
-        public BitbucketSettingsPartDriver(IRepository<RepositorySettingsRecord> repository)
+        public BitbucketSettingsPartDriver(IRepository<BitbucketRepositorySettingsRecord> repository)
         {
             _repository = repository;
         }

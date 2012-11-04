@@ -9,19 +9,19 @@ namespace OrchardHUN.Bitbucket.Models
 {
     public class BitbucketSettingsPart : ContentPart
     {
-        private readonly LazyField<IList<RepositorySettingsRecord>> _repositories = new LazyField<IList<RepositorySettingsRecord>>();
-        public LazyField<IList<RepositorySettingsRecord>> RepositoriesField { get { return _repositories; } }
-        public IList<RepositorySettingsRecord> Repositories
+        private readonly LazyField<IList<BitbucketRepositorySettingsRecord>> _repositories = new LazyField<IList<BitbucketRepositorySettingsRecord>>();
+        public LazyField<IList<BitbucketRepositorySettingsRecord>> RepositoriesField { get { return _repositories; } }
+        public IList<BitbucketRepositorySettingsRecord> Repositories
         {
             get { return _repositories.Value; }
             set { RepositoriesField.Value = value; }
         }
 
-        public RepositorySettingsRecord NewRepository { get; set; }
+        public BitbucketRepositorySettingsRecord NewRepository { get; set; }
 
         public BitbucketSettingsPart()
         {
-            NewRepository = new RepositorySettingsRecord();
+            NewRepository = new BitbucketRepositorySettingsRecord();
         }
     }
 }

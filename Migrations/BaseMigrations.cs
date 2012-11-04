@@ -8,9 +8,9 @@ using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using OrchardHUN.Bitbucket.Models;
 
-namespace OrchardHUN.Bitbucket
+namespace OrchardHUN.Bitbucket.Migrations
 {
-    public class Migrations : DataMigrationImpl
+    public class BaseMigrations : DataMigrationImpl
     {
         public int Create()
         {
@@ -35,19 +35,6 @@ namespace OrchardHUN.Bitbucket
                         .WithSetting("AutorouteSettings.DefaultPatternIndex", "0"))
                     .WithPart(typeof(MarkdownPagePart).Name)
             );
-
-            SchemaBuilder.CreateTable(typeof(RepositorySettingsRecord).Name,
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("AccountName")
-                    .Column<string>("Slug")
-                    .Column<string>("Username")
-                    .Column<string>("Password")
-                    .Column<bool>("MirrorFiles")
-                    .Column<int>("MaximalFileSizeKB")
-                    .Column<string>("UrlMappingsDefinition")
-                    .Column<string>("LastNode")
-                );
 
 
             return 1;

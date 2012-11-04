@@ -7,7 +7,7 @@ using Orchard.Data.Conventions;
 
 namespace OrchardHUN.Bitbucket.Models
 {
-    public class RepositorySettingsRecord
+    public class BitbucketRepositorySettingsRecord
     {
         public virtual int Id { get; set; }
         public virtual string AccountName { get; set; }
@@ -22,7 +22,7 @@ namespace OrchardHUN.Bitbucket.Models
 
         public virtual string LastNode { get; set; }
 
-        public RepositorySettingsRecord()
+        public BitbucketRepositorySettingsRecord()
         {
             MaximalFileSizeKB = 1024;
         }
@@ -30,7 +30,7 @@ namespace OrchardHUN.Bitbucket.Models
 
     public static class RepositorySettingsRecordExtensions
     {
-        public static IEnumerable<UrlMapping> UrlMappings(this RepositorySettingsRecord settings)
+        public static IEnumerable<UrlMapping> UrlMappings(this BitbucketRepositorySettingsRecord settings)
         {
             if (String.IsNullOrEmpty(settings.UrlMappingsDefinition)) return Enumerable.Empty<UrlMapping>();
 

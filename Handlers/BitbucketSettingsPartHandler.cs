@@ -16,7 +16,7 @@ namespace OrchardHUN.Bitbucket.Handlers
         public Localizer T { get; set; }
 
 
-        public BitbucketSettingsPartHandler(Work<IRepository<RepositorySettingsRecord>> repositoryWork)
+        public BitbucketSettingsPartHandler(Work<IRepository<BitbucketRepositorySettingsRecord>> repositoryWork)
         {
             Filters.Add(new ActivatingFilter<BitbucketSettingsPart>("Site"));
 
