@@ -4,12 +4,14 @@ using System.Linq;
 using System.Web;
 using Orchard.ContentManagement;
 using Orchard.Data;
+using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketService : IBitbucketService
     {
         private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;

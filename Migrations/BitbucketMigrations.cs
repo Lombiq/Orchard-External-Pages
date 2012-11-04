@@ -10,6 +10,7 @@ using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Migrations
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketMigrations : DataMigrationImpl
     {
         public int Create()

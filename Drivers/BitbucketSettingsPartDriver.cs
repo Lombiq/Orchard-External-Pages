@@ -6,10 +6,12 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
+using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Drivers
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPartDriver : ContentPartDriver<BitbucketSettingsPart>
     {
         private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;

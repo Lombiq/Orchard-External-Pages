@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Utilities;
+using Orchard.Environment.Extensions;
 
 namespace OrchardHUN.ExternalPages.Models
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPart : ContentPart
     {
         private readonly LazyField<IList<BitbucketRepositorySettingsRecord>> _repositories = new LazyField<IList<BitbucketRepositorySettingsRecord>>();

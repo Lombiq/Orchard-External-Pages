@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Orchard.Data;
 using Orchard.Environment;
+using Orchard.Environment.Extensions;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
 using OrchardHUN.ExternalPages.Models;
@@ -13,6 +14,7 @@ using Piedone.HelpfulLibraries.Tasks.Jobs;
 
 namespace OrchardHUN.ExternalPages.Services
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents
     {
         private const string TaskType = "OrchardHUN.ExternalPages.BitbucketChangesetUpdate";

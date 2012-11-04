@@ -6,11 +6,13 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Handlers
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPartHandler : ContentHandler
     {
         public Localizer T { get; set; }

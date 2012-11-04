@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Orchard.Data.Conventions;
+using Orchard.Environment.Extensions;
 
 namespace OrchardHUN.ExternalPages.Models
 {
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketRepositorySettingsRecord
     {
         public virtual int Id { get; set; }
@@ -28,6 +30,7 @@ namespace OrchardHUN.ExternalPages.Models
         }
     }
 
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public static class RepositorySettingsRecordExtensions
     {
         public static IEnumerable<UrlMapping> UrlMappings(this BitbucketRepositorySettingsRecord settings)
@@ -53,6 +56,7 @@ namespace OrchardHUN.ExternalPages.Models
         }
     }
 
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class UrlMapping
     {
         public string LocalPath { get; set; }

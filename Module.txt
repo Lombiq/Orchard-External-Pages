@@ -4,10 +4,15 @@ Author: The Orchard Hungary Team
 Website: http://orchardexternalpages.codeplex.com
 Version: 1.0
 OrchardVersion: 1.6
-Description: Description for the module
+Description: Deals with aggregating pages from external sources
 Features:
     OrchardHUN.ExternalPages:
 		Name: External Pages
-        Description: Description for feature OrchardHUN.ExternalPages.
+        Description: Deals with aggregating pages from external sources
 		Category: Content
 		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title
+    OrchardHUN.ExternalPages.Bitbucket:
+		Name: External Pages: Bitbucket
+        Description: Aggregates pages from a Bitbucket repository
+		Category: Content
+		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs
