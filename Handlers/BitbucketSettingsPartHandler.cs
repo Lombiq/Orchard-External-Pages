@@ -36,8 +36,8 @@ namespace OrchardHUN.Bitbucket.Handlers
 
             base.GetItemMetadata(context);
 
-            var groupInfo = new GroupInfo(T("Bitbucket Settings")); // Addig a new group to the "Settings" menu.
-            groupInfo.Id = "BitbucketSettings";
+            var groupInfo = new GroupInfo(T("External Pages Settings")); // Addig a new group to the "Settings" menu.
+            groupInfo.Id = "ExternalPagesSettings";
             context.Metadata.EditorGroupInfo.Add(groupInfo);
         }
     }
