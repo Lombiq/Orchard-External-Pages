@@ -8,5 +8,6 @@ namespace OrchardHUN.ExternalPages.Services
     {
         IRepository<BitbucketRepositorySettingsRecord> SettingsRepository { get; }
         void CheckChangesets(int repositoryId);
+        void ProcessNextPendingChangeset();
     }
 }

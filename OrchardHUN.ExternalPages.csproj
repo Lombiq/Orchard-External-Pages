@@ -87,6 +87,10 @@
       <Project>{9916839c-39fc-4ceb-a5af-89ca7e87119f}</Project>
       <Name>Orchard.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orchard.Autoroute\Orchard.Autoroute.csproj">
+      <Project>{66fccd76-2761-47e3-8d11-b45d0001ddaa}</Project>
+      <Name>Orchard.Autoroute</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Orchard.Tokens\Orchard.Tokens.csproj">
       <Project>{6f759635-13d7-4e94-bcc9-80445d63f117}</Project>
       <Name>Orchard.Tokens</Name>
@@ -101,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BitbucketAdminController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Drivers\BitbucketSettingsPartDriver.cs" />
     <Compile Include="Drivers\MarkdownPagePartDriver.cs" />
     <Compile Include="Handlers\BitbucketSettingsPartHandler.cs" />

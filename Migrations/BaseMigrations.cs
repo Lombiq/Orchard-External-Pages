@@ -19,7 +19,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .CreateIndex("RepoPath", new string[] { "RepoPath" })
                 );
 
-            ContentDefinitionManager.AlterTypeDefinition("MarkdownRepoPage",
+            ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
                 cfg => cfg
                     .WithPart("TitlePart")
                     .WithPart("AutoroutePart", builder => builder

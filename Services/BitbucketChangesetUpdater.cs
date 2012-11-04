@@ -59,7 +59,7 @@ namespace OrchardHUN.ExternalPages.Services
 
         private void CreateTask()
         {
-            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(10), null); 
+            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(1), null); 
         }
     }
 }

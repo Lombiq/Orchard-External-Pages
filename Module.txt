@@ -10,9 +10,9 @@ Features:
 		Name: External Pages
         Description: Deals with aggregating pages from external sources
 		Category: Content
-		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Orchard.Autoroute, Title
+		Dependencies: Orchard.Autoroute, Title
     OrchardHUN.ExternalPages.Bitbucket:
 		Name: External Pages: Bitbucket
         Description: Aggregates pages from a Bitbucket repository
 		Category: Content
-		Dependencies: Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs
+		Dependencies: OrchardHUN.ExternalPages, Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs
