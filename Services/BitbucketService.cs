@@ -36,35 +36,83 @@ namespace OrchardHUN.ExternalPages.Services
         }
 
 
-        // For initial population if there are more than 50 changesets, TODO
-        //public void Populate(int repositoryId)
-        //{
-        //}
+        public void Populate(int repositoryId)
+        {
+            var settings = GetRepositorySettingsOrThrow(repositoryId);
+
+            if (!String.IsNullOrEmpty(settings.LastNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " is already populated.");
+
+            var changesetRestObjects = PrepareRest(settings, "changesets?limit=1");
+
+            var changesetResponse = changesetRestObjects.Client.Execute<ChangesetsResponse>(changesetRestObjects.Request);
+            ThrowIfBadResponse(changesetRestObjects.Request, changesetResponse);
+            var lastChangeset = changesetResponse.Data.Changesets.FirstOrDefault();
+
+            if (lastChangeset == null) return;
+
+            Func<string, List<FolderSrcFile>> recursivelyFetchFileList = null;
+            recursivelyFetchFileList =
+                (path) =>
+                {
+                    var restObjects = PrepareRest(settings, "src/" + lastChangeset.Revision + "/" + path);
+                    var response = restObjects.Client.Execute<FolderSrcResponse>(restObjects.Request);
+                    var responseData = response.Data;
+                    ThrowIfBadResponse(restObjects.Request, response);
+
+                    if (responseData.Directories.Count == 0) return responseData.Files;
+
+                    var files = new List<FolderSrcFile>();
+                    foreach (var directory in responseData.Directories)
+                    {
+                        files.AddRange(recursivelyFetchFileList(path + directory + "/"));
+                    }
+                    return files;
+                };
+
+            foreach (var mapping in settings.UrlMappings())
+            {
+                var files = recursivelyFetchFileList(mapping.RepoPath + "/");
+
+                var jobFiles = new List<UpdateJobFile>(files.Count);
+                foreach (var file in files)
+                {
+                    jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.Added));
+                }
+
+                var jobContext = new UpdateJobContext(
+                                    repositoryId,
+                                    lastChangeset.Revision,
+                                    jobFiles);
+
+                _jobManager.CreateJob(Industry, jobContext);
+            }
+
+            settings.LastNode = lastChangeset.Node;
+        }
 
         public void CheckChangesets(int repositoryId)
         {
             var settings = GetRepositorySettingsOrThrow(repositoryId);
 
+            if (String.IsNullOrEmpty(settings.LastNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
+
             var restObjects = PrepareRest(settings, "changesets?limit=50");
 
             var response = restObjects.Client.Execute<ChangesetsResponse>(restObjects.Request);
-            BitbucketService.ThrowIfBadResponse(restObjects.Request, response);
+            ThrowIfBadResponse(restObjects.Request, response);
 
             var changesets = response.Data.Changesets;
 
-            if (!String.IsNullOrEmpty(settings.LastNode))
+            var lastChangeset = changesets.Where(changeset => changeset.Node == settings.LastNode).SingleOrDefault();
+            if (lastChangeset != null)
             {
-                var lastChangeset = changesets.Where(changeset => changeset.RawNode == settings.LastNode).SingleOrDefault();
-                if (lastChangeset != null)
-                {
-                    var lastChangesetIndex = changesets.IndexOf(lastChangeset);
-                    changesets.RemoveRange(0, lastChangesetIndex + 1);
-                }
+                var lastChangesetIndex = changesets.IndexOf(lastChangeset);
+                changesets.RemoveRange(0, lastChangesetIndex + 1);
             }
 
             if (changesets.Count == 0) return;
 
-            settings.LastNode = changesets.Last().RawNode;
+            settings.LastNode = changesets.Last().Node;
 
             var urlMappings = settings.UrlMappings();
 
@@ -135,7 +183,7 @@ namespace OrchardHUN.ExternalPages.Services
         {
             public string Branch { get; set; }
             public int Revision { get; set; }
-            public string RawNode { get; set; }
+            public string Node { get; set; }
             public DateTime UtcTimestamp { get; set; }
             public List<ChangesetFile> Files { get; set; }
         }
@@ -146,10 +194,24 @@ namespace OrchardHUN.ExternalPages.Services
             public string File { get; set; }
         }
 
-        public class SrcResponse
+        public class FileSrcResponse
         {
             public string Node { get; set; }
             public string Data { get; set; }
+        }
+
+        public class FolderSrcResponse
+        {
+            public string Node { get; set; }
+            public List<string> Directories { get; set; }
+            public List<FolderSrcFile> Files { get; set; }
+        }
+
+        public class FolderSrcFile
+        {
+            public int Size { get; set; }
+            public string Path { get; set; }
+            public DateTime UtcTimestamp { get; set; }
         }
         #endregion
 
@@ -222,13 +284,17 @@ namespace OrchardHUN.ExternalPages.Services
 
         private static void ThrowIfBadResponse(RestRequest request, IRestResponse response)
         {
-            if (response.ResponseStatus == ResponseStatus.Completed) return;
-
             if (response.ResponseStatus == ResponseStatus.TimedOut)
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " timed out.", response.ErrorException);
 
             if (response.ResponseStatus == ResponseStatus.Error)
-                throw new ApplicationException("The Bitbucket API request to " + request.Resource + " failed with the following status: " + response.StatusDescription, response.ErrorException);
+               throw new ApplicationException("The Bitbucket API request to " + request.Resource + " failed with the following status: " + response.StatusDescription, response.ErrorException);
+
+            if (response.ResponseStatus == ResponseStatus.Aborted)
+                throw new ApplicationException("The Bitbucket API request to " + request.Resource + " was aborted.", response.ErrorException);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                throw new ApplicationException("The Bitbucket API request to " + request.Resource + " is unauthorized.", response.ErrorException);
         }
 
         private class FileProcessor
@@ -265,7 +331,7 @@ namespace OrchardHUN.ExternalPages.Services
                 if (file.Type == UpdateJobfileType.Added || file.Type == UpdateJobfileType.Modified)
                 {
                     var restObjects = PrepareRest(_settings, "src/" + _jobContext.Revision + "/" + file.Path);
-                    var response = restObjects.Client.Execute<SrcResponse>(restObjects.Request);
+                    var response = restObjects.Client.Execute<FileSrcResponse>(restObjects.Request);
                     BitbucketService.ThrowIfBadResponse(restObjects.Request, response);
 
                     var src = response.Data;

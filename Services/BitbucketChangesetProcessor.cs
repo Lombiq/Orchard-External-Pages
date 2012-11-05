@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using Orchard.Environment.Extensions;
-using OrchardHUN.ExternalPages.Services;
+using Orchard.Tasks;
 
-namespace OrchardHUN.ExternalPages.Controllers
+namespace OrchardHUN.ExternalPages.Services
 {
-    public class HomeController : Controller
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
+    public class BitbucketChangesetProcessor : IBackgroundTask
     {
         private readonly IBitbucketService _bitbucketService;
 
-        public HomeController(IBitbucketService bitbucketService)
+
+        public BitbucketChangesetProcessor(IBitbucketService bitbucketService)
         {
             _bitbucketService = bitbucketService;
         }
 
-        public void Index()
+
+        public void Sweep()
         {
             _bitbucketService.ProcessNextPendingChangeset();
         }

@@ -1,9 +1,11 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Services;
+using Orchard.Exceptions;
 
 namespace OrchardHUN.ExternalPages.Controllers
 {
@@ -35,6 +37,28 @@ namespace OrchardHUN.ExternalPages.Controllers
             if (record != null) settingsRepository.Delete(record);
 
             _notifier.Information(T("Repository deleted."));
+
+            return Redirect(returnUrl);
+        }
+
+        [HttpPost]
+        public ActionResult PopulateRepository(int id, string returnUrl)
+        {
+            var settings = _bitbucketService.SettingsRepository.Get(id);
+
+            if (settings == null) return Redirect(returnUrl);
+
+            try
+            {
+                _bitbucketService.Populate(id);
+                _notifier.Information(T("Initial population from the repository scheduled."));
+            }
+            catch (Exception ex)
+            {
+                if (ex.IsFatal()) throw;
+
+                _notifier.Error(T("Initial population failed with the following exception: {0}", ex.Message));
+            }
 
             return Redirect(returnUrl);
         }

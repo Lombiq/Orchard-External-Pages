@@ -116,6 +116,7 @@
     <Compile Include="Models\BitbucketSettingsPart.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
+    <Compile Include="Services\BitbucketChangesetProcessor.cs" />
     <Compile Include="Services\BitbucketService.cs" />
     <Compile Include="Services\BitbucketChangesetUpdater.cs" />
     <Compile Include="Services\IBitbucketService.cs" />

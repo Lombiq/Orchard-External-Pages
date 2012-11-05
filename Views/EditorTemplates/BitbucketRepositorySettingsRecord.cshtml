@@ -1,5 +1,4 @@
 ﻿@model OrchardHUN.ExternalPages.Models.BitbucketRepositorySettingsRecord
-
 <fieldset class="orchardhun-external-pages-bitbucket-repository-settings">
     <legend>
         @if (!String.IsNullOrEmpty(Model.AccountName))
@@ -17,6 +16,11 @@
         {
             @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
             <span class="hint">@T("Deleting the repository only prevents further updating but all the existing local data remains.")</span>
+            if (String.IsNullOrEmpty(Model.LastNode))
+            {
+                @Html.ActionLink(T("Populate").Text, "PopulateRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "UnsafeUrl", @class = "button" })
+                <span class="hint">@T("Since there are no pages saved from this repository yet you can click this button to schedule an initial population. Make sure to set up url mappings properly first. Before this initial population the repository's content won't be pulled in.")</span>
+            }
         }
         <ol>
             <li>

@@ -1,4 +1,5 @@
-﻿using Orchard.Environment;
+﻿using System;
+using Orchard.Environment;
 using Orchard.Environment.Extensions;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
@@ -41,7 +42,11 @@ namespace OrchardHUN.ExternalPages.Services
 
                 foreach (var repository in _bitbucketService.SettingsRepository.Table)
                 {
-                    _bitbucketService.CheckChangesets(repository.Id);
+                    // The repository is populated
+                    if (!String.IsNullOrEmpty(repository.LastNode))
+                    {
+                        _bitbucketService.CheckChangesets(repository.Id); 
+                    }
                 }
 
                 CreateTask();
