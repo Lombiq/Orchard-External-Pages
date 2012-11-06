@@ -52,6 +52,11 @@ namespace OrchardHUN.ExternalPages.Models
             }
             return mappings;
         }
+
+        public static bool IsPopulated(this BitbucketRepositorySettingsRecord settings)
+        {
+            return !String.IsNullOrEmpty(settings.LastNode);
+        }
     }
 
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]

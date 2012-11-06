@@ -13,6 +13,7 @@ using Orchard.Core.Common.Models;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.IO;
 
 namespace OrchardHUN.ExternalPages.Services
 {
@@ -68,6 +69,7 @@ namespace OrchardHUN.ExternalPages.Services
                     {
                         files.AddRange(recursivelyFetchFileList(path + directory + "/"));
                     }
+                    files.AddRange(responseData.Files);
                     return files;
                 };
 
@@ -263,11 +265,8 @@ namespace OrchardHUN.ExternalPages.Services
         private static RestObjects PrepareRest(BitbucketRepositorySettingsRecord settings, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
-            client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
-            var request = new RestRequest("repositories/{accountname}/{slug}/" + path);
-            request.AddUrlSegment("accountname", settings.AccountName);
-            request.AddUrlSegment("slug", settings.Slug);
-
+            if (!String.IsNullOrEmpty(settings.Username)) client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
+            var request = new RestRequest("repositories/" + settings.AccountName + "/" + settings.Slug + "/" + path);
             return new RestObjects(client, request);
         }
 
@@ -327,7 +326,11 @@ namespace OrchardHUN.ExternalPages.Services
                 var mapping = _urlMappings.Where(urlMapping => file.Path.StartsWith(urlMapping.RepoPath)).FirstOrDefault();
                 if (mapping == null) return;
 
-                var localPath = file.Path.Replace(mapping.RepoPath, mapping.LocalPath).Replace("Index", "").Replace(".md", "");
+                var localPath = file.Path;
+                if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath);
+                else localPath = mapping.LocalPath + "/" + localPath;
+                localPath = localPath.Replace("Index", "").Replace(".md", "");
+
                 ContentItem page = null;
 
                 if (file.Type == UpdateJobfileType.Added || file.Type == UpdateJobfileType.Modified)
@@ -340,7 +343,9 @@ namespace OrchardHUN.ExternalPages.Services
 
                     if (file.Type == UpdateJobfileType.Modified) page = FetchPage(file.Path);
 
-                    if (page == null)
+                    var isNew = page == null;
+
+                    if (isNew)
                     {
                         page = _service._contentManager.New(WellKnownConstants.RepoPageContentType);
 
@@ -349,8 +354,6 @@ namespace OrchardHUN.ExternalPages.Services
                         autoroutePart.UseCustomPattern = true;
                         autoroutePart.DisplayAlias = localPath;
                         page.As<MarkdownPagePart>().RepoPath = file.Path;
-
-                        _service._contentManager.Create(page);
                     }
 
                     page.As<MarkdownPagePart>().Text = src.Data;
@@ -362,6 +365,9 @@ namespace OrchardHUN.ExternalPages.Services
                         // If this line consists of just equals signs, the above line is a title
                         if (Regex.IsMatch(lines[i], "^[=]*$")) page.As<TitlePart>().Title = lines[i - 1];
                     }
+
+                    // This is needed after the title is set, because slug generation needs it
+                    if (isNew)  _service._contentManager.Create(page);
 
                     _service._contentManager.Publish(page);
                     _service._contentManager.Flush();

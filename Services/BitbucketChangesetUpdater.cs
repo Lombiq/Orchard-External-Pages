@@ -5,6 +5,7 @@ using Orchard.Services;
 using Orchard.Tasks.Scheduling;
 using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
+using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Services
 {
@@ -42,11 +43,7 @@ namespace OrchardHUN.ExternalPages.Services
 
                 foreach (var repository in _bitbucketService.SettingsRepository.Table)
                 {
-                    // The repository is populated
-                    if (!String.IsNullOrEmpty(repository.LastNode))
-                    {
-                        _bitbucketService.CheckChangesets(repository.Id); 
-                    }
+                    if (repository.IsPopulated()) _bitbucketService.CheckChangesets(repository.Id);
                 }
 
                 CreateTask();
@@ -64,7 +61,7 @@ namespace OrchardHUN.ExternalPages.Services
 
         private void CreateTask()
         {
-            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(1), null); 
+            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(1), null);
         }
     }
 }
