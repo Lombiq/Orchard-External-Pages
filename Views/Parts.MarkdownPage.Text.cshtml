@@ -1,5 +1,9 @@
-﻿@{
+﻿@using System.Text.RegularExpressions
+
+@{
     var part = (OrchardHUN.ExternalPages.Models.MarkdownPagePart)Model.ContentPart;
+    var regex = new Regex("<h1>.*</h1>");
+    var output = regex.Replace(part.Html, "", 1);
 }
 
-@(new HtmlString(part.Html))
+@(new HtmlString(output))
