@@ -11,9 +11,12 @@ using RestSharp;
 using Orchard.Core.Title.Models;
 using Orchard.Core.Common.Models;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace OrchardHUN.ExternalPages.Services
 {
+
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketService : IBitbucketService
     {
@@ -43,7 +46,6 @@ namespace OrchardHUN.ExternalPages.Services
             if (!String.IsNullOrEmpty(settings.LastNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " is already populated.");
 
             var changesetRestObjects = PrepareRest(settings, "changesets?limit=1");
-
             var changesetResponse = changesetRestObjects.Client.Execute<ChangesetsResponse>(changesetRestObjects.Request);
             ThrowIfBadResponse(changesetRestObjects.Request, changesetResponse);
             var lastChangeset = changesetResponse.Data.Changesets.FirstOrDefault();
@@ -288,7 +290,7 @@ namespace OrchardHUN.ExternalPages.Services
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " timed out.", response.ErrorException);
 
             if (response.ResponseStatus == ResponseStatus.Error)
-               throw new ApplicationException("The Bitbucket API request to " + request.Resource + " failed with the following status: " + response.StatusDescription, response.ErrorException);
+                throw new ApplicationException("The Bitbucket API request to " + request.Resource + " failed with the following status: " + response.StatusDescription, response.ErrorException);
 
             if (response.ResponseStatus == ResponseStatus.Aborted)
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " was aborted.", response.ErrorException);
