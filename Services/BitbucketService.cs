@@ -360,10 +360,18 @@ namespace OrchardHUN.ExternalPages.Services
 
                     // Searching for the (first) title in the markdown text
                     var lines = Regex.Split(src.Data, "\r\n|\r|\n");
-                    for (int i = lines.Length - 1; i > 0; i--)
+                    int i = 1;
+                    var titleFound = false;
+                    while (!titleFound && i < lines.Length)
                     {
                         // If this line consists of just equals signs, the above line is a title
-                        if (Regex.IsMatch(lines[i], "^[=]*$")) page.As<TitlePart>().Title = lines[i - 1];
+                        if (Regex.IsMatch(lines[i], "^[=]*$"))
+                        {
+                            page.As<TitlePart>().Title = lines[i - 1];
+                            titleFound = true;
+                        }
+
+                        i++;
                     }
 
                     // This is needed after the title is set, because slug generation needs it
