@@ -149,7 +149,7 @@ namespace OrchardHUN.ExternalPages.Services
 
         public void ProcessNextPendingChangeset()
         {
-            var job = _jobManager.TakeJob(Industry);
+            var job = _jobManager.TakeOnlyJob(Industry);
 
             if (job == null) return;
 
