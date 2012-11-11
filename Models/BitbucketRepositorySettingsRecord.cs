@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Orchard.Data.Conventions;
 using Orchard.Environment.Extensions;
 
@@ -36,7 +37,7 @@ namespace OrchardHUN.ExternalPages.Models
             if (String.IsNullOrEmpty(settings.UrlMappingsDefinition)) return Enumerable.Empty<UrlMapping>();
 
             var mappings = new List<UrlMapping>();
-            foreach (var mappingLine in settings.UrlMappingsDefinition.Trim().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var mappingLine in Regex.Split(settings.UrlMappingsDefinition.Trim(), "\r\n|\r|\n"))
             {
                 if (!String.IsNullOrEmpty(mappingLine))
                 {
