@@ -3,6 +3,8 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Localization;
+using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Drivers
@@ -10,17 +12,25 @@ namespace OrchardHUN.ExternalPages.Drivers
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPartDriver : ContentPartDriver<BitbucketSettingsPart>
     {
-        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
+        private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
+        private readonly INotifier _notifier;
 
         protected override string Prefix
         {
             get { return "OrchardHUN.ExternalPages.BitbucketSettingsPart"; }
         }
 
+        public Localizer T { get; set; }
 
-        public BitbucketSettingsPartDriver(IRepository<BitbucketRepositorySettingsRecord> repository)
+
+        public BitbucketSettingsPartDriver(
+            IRepository<BitbucketRepositoryDataRecord> repository,
+            INotifier notifier)
         {
             _repository = repository;
+            _notifier = notifier;
+
+            T = NullLocalizer.Instance;
         }
 
 
@@ -60,6 +70,7 @@ namespace OrchardHUN.ExternalPages.Drivers
             if (part.NewRepository != null && !String.IsNullOrEmpty(part.NewRepository.AccountName))
             {
                 _repository.Create(part.NewRepository);
+                _notifier.Information(T("The new repository entry was created. Before it wil be updated you should populate it first."));
             }
 
             _repository.Flush();

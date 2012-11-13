@@ -23,21 +23,6 @@ namespace OrchardHUN.ExternalPages.Drivers
                 );
         }
 
-        protected override DriverResult Editor(MarkdownPagePart part, dynamic shapeHelper)
-        {
-            return ContentShape("Parts_Script_Edit",
-                    () => shapeHelper.EditorTemplate(
-                            TemplateName: "Parts.Script",
-                            Model: part,
-                            Prefix: Prefix));
-        }
-
-        protected override DriverResult Editor(MarkdownPagePart part, IUpdateModel updater, dynamic shapeHelper)
-        {
-            updater.TryUpdateModel(part, Prefix, null, null);
-            return Editor(part, shapeHelper);
-        }
-
         protected override void Exporting(MarkdownPagePart part, ExportContentContext context)
         {
             var partName = part.PartDefinition.Name;

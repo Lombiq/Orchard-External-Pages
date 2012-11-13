@@ -8,19 +8,19 @@ namespace OrchardHUN.ExternalPages.Models
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPart : ContentPart
     {
-        private readonly LazyField<IList<BitbucketRepositorySettingsRecord>> _repositories = new LazyField<IList<BitbucketRepositorySettingsRecord>>();
-        public LazyField<IList<BitbucketRepositorySettingsRecord>> RepositoriesField { get { return _repositories; } }
-        public IList<BitbucketRepositorySettingsRecord> Repositories
+        private readonly LazyField<IList<BitbucketRepositoryDataRecord>> _repositories = new LazyField<IList<BitbucketRepositoryDataRecord>>();
+        public LazyField<IList<BitbucketRepositoryDataRecord>> RepositoriesField { get { return _repositories; } }
+        public IList<BitbucketRepositoryDataRecord> Repositories
         {
             get { return _repositories.Value; }
             set { RepositoriesField.Value = value; }
         }
 
-        public BitbucketRepositorySettingsRecord NewRepository { get; set; }
+        public BitbucketRepositoryDataRecord NewRepository { get; set; }
 
         public BitbucketSettingsPart()
         {
-            NewRepository = new BitbucketRepositorySettingsRecord();
+            NewRepository = new BitbucketRepositoryDataRecord();
         }
     }
 }

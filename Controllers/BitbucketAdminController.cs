@@ -31,10 +31,10 @@ namespace OrchardHUN.ExternalPages.Controllers
         [HttpPost]
         public ActionResult DeleteRepository(int id, string returnUrl)
         {
-            var settingsRepository = _bitbucketService.SettingsRepository;
+            var repoDataRepository = _bitbucketService.RepositoryDataRepository;
 
-            var record = settingsRepository.Get(id);
-            if (record != null) settingsRepository.Delete(record);
+            var record = repoDataRepository.Get(id);
+            if (record != null) repoDataRepository.Delete(record);
 
             _notifier.Information(T("Repository deleted."));
 
@@ -42,22 +42,22 @@ namespace OrchardHUN.ExternalPages.Controllers
         }
 
         [HttpPost]
-        public ActionResult PopulateRepository(int id, string returnUrl)
+        public ActionResult RepopulateRepository(int id, string returnUrl)
         {
-            var settings = _bitbucketService.SettingsRepository.Get(id);
+            var repoData = _bitbucketService.RepositoryDataRepository.Get(id);
 
-            if (settings == null) return Redirect(returnUrl);
+            if (repoData == null) return Redirect(returnUrl);
 
             try
             {
-                _bitbucketService.Populate(id);
-                _notifier.Information(T("Initial population from the repository scheduled."));
+                _bitbucketService.Repopulate(id);
+                _notifier.Information(T("Repopulation from the repository scheduled."));
             }
             catch (Exception ex)
             {
                 if (ex.IsFatal()) throw;
 
-                _notifier.Error(T("Initial population failed with the following exception: {0}", ex.Message));
+                _notifier.Error(T("Repopulation failed with the following exception: {0}", ex.Message));
             }
 
             return Redirect(returnUrl);

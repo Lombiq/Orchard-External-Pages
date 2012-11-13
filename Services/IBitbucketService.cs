@@ -6,8 +6,9 @@ namespace OrchardHUN.ExternalPages.Services
 {
     public interface IBitbucketService : IDependency
     {
-        IRepository<BitbucketRepositorySettingsRecord> SettingsRepository { get; }
-        void Populate(int repositoryId);
+        IRepository<BitbucketRepositoryDataRecord> RepositoryDataRepository { get; }
+
+        void Repopulate(int repositoryId);
         void CheckChangesets(int repositoryId);
         void ProcessNextPendingChangeset();
     }

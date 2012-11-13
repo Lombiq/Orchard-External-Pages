@@ -19,7 +19,7 @@ namespace OrchardHUN.ExternalPages.Controllers
 
         public void Index()
         {
-            _bitbucketService.Populate(2);
+            _bitbucketService.Repopulate(2);
         }
     }
 }

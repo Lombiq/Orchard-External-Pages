@@ -22,15 +22,15 @@ namespace OrchardHUN.ExternalPages.Services
     public class BitbucketService : IBitbucketService
     {
         private const string Industry = "OrchardHUN.ExternalPages.Bitbucket.Changesets";
-        private readonly IRepository<BitbucketRepositorySettingsRecord> _repository;
+        private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IJobManager _jobManager;
         private readonly IContentManager _contentManager;
 
-        public IRepository<BitbucketRepositorySettingsRecord> SettingsRepository { get { return _repository; } }
+        public IRepository<BitbucketRepositoryDataRecord> RepositoryDataRepository { get { return _repository; } }
 
 
         public BitbucketService(
-            IRepository<BitbucketRepositorySettingsRecord> repository,
+            IRepository<BitbucketRepositoryDataRecord> repository,
             IJobManager jobManager,
             IContentManager contentManager)
         {
@@ -40,13 +40,11 @@ namespace OrchardHUN.ExternalPages.Services
         }
 
 
-        public void Populate(int repositoryId)
+        public void Repopulate(int repositoryId)
         {
-            var settings = GetRepositorySettingsOrThrow(repositoryId);
+            var repoData = GetRepositoryDataOrThrow(repositoryId);
 
-            if (!String.IsNullOrEmpty(settings.LastNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " is already populated.");
-
-            var changesetRestObjects = PrepareRest(settings, "changesets?limit=1");
+            var changesetRestObjects = PrepareRest(repoData, "changesets?limit=1");
             var changesetResponse = changesetRestObjects.Client.Execute<ChangesetsResponse>(changesetRestObjects.Request);
             ThrowIfBadResponse(changesetRestObjects.Request, changesetResponse);
             var lastChangeset = changesetResponse.Data.Changesets.FirstOrDefault();
@@ -57,7 +55,7 @@ namespace OrchardHUN.ExternalPages.Services
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var restObjects = PrepareRest(settings, "src/" + lastChangeset.Revision + "/" + path);
+                    var restObjects = PrepareRest(repoData, "src/" + lastChangeset.Revision + "/" + path);
                     var response = restObjects.Client.Execute<FolderSrcResponse>(restObjects.Request);
                     var responseData = response.Data;
                     ThrowIfBadResponse(restObjects.Request, response);
@@ -73,41 +71,43 @@ namespace OrchardHUN.ExternalPages.Services
                     return files;
                 };
 
-            foreach (var mapping in settings.UrlMappings())
+            foreach (var mapping in repoData.UrlMappings())
             {
                 var files = recursivelyFetchFileList(mapping.RepoPath + "/");
 
                 var jobFiles = new List<UpdateJobFile>(files.Count);
                 foreach (var file in files)
                 {
-                    jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.Added));
+                    jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.AddedOrModified));
                 }
 
                 var jobContext = new UpdateJobContext(
                                     repositoryId,
+                                    lastChangeset.Node,
                                     lastChangeset.Revision,
                                     jobFiles);
 
                 _jobManager.CreateJob(Industry, jobContext);
             }
 
-            settings.LastNode = lastChangeset.Node;
+            repoData.LastCheckedNode = lastChangeset.Node;
+            repoData.LastCheckedRevision = lastChangeset.Revision;
         }
 
         public void CheckChangesets(int repositoryId)
         {
-            var settings = GetRepositorySettingsOrThrow(repositoryId);
+            var repoData = GetRepositoryDataOrThrow(repositoryId);
 
-            if (String.IsNullOrEmpty(settings.LastNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
+            if (String.IsNullOrEmpty(repoData.LastCheckedNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
 
-            var restObjects = PrepareRest(settings, "changesets?limit=50");
+            var restObjects = PrepareRest(repoData, "changesets?limit=50");
 
             var response = restObjects.Client.Execute<ChangesetsResponse>(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
 
             var changesets = response.Data.Changesets;
 
-            var lastChangeset = changesets.Where(changeset => changeset.Node == settings.LastNode).SingleOrDefault();
+            var lastChangeset = changesets.Where(changeset => changeset.Node == repoData.LastCheckedNode).SingleOrDefault();
             if (lastChangeset != null)
             {
                 var lastChangesetIndex = changesets.IndexOf(lastChangeset);
@@ -116,9 +116,11 @@ namespace OrchardHUN.ExternalPages.Services
 
             if (changesets.Count == 0) return;
 
-            settings.LastNode = changesets.Last().Node;
+            lastChangeset = changesets.Last();
+            repoData.LastCheckedNode = lastChangeset.Node;
+            repoData.LastCheckedRevision = lastChangeset.Revision;
 
-            var urlMappings = settings.UrlMappings();
+            var urlMappings = repoData.UrlMappings();
 
             foreach (var changeset in changesets.Where(changeset => changeset.Branch == "default"))
             {
@@ -139,6 +141,7 @@ namespace OrchardHUN.ExternalPages.Services
 
                     var jobContext = new UpdateJobContext(
                                         repositoryId,
+                                        changeset.Node,
                                         changeset.Revision,
                                         jobFiles);
 
@@ -155,21 +158,30 @@ namespace OrchardHUN.ExternalPages.Services
 
             var jobContext = job.Context<UpdateJobContext>();
 
-            var settings = _repository.Get(jobContext.RepositoryId);
+            var repoData = _repository.Get(jobContext.RepositoryId);
 
-            if (settings == null)
+            if (repoData == null)
             {
                 // Repository was deleted since the job was created
                 _jobManager.Done(job);
                 return;
             }
 
-            var fileProcessor = new FileProcessor(this, settings, jobContext);
+            if (jobContext.Revision <= repoData.LastProcessedRevision)
+            {
+                _jobManager.Done(job);
+                return;
+            }
+
+
+            var fileProcessor = new FileProcessor(this, repoData, jobContext);
             foreach (var file in jobContext.Files)
             {
                 fileProcessor.Process(file);
             }
 
+            repoData.LastProcessedNode = jobContext.Node;
+            repoData.LastProcessedRevision = jobContext.Revision;
             _jobManager.Done(job);
         }
 
@@ -223,12 +235,14 @@ namespace OrchardHUN.ExternalPages.Services
         public class UpdateJobContext
         {
             public int RepositoryId { get; private set; }
+            public string Node { get; private set; }
             public int Revision { get; private set; }
             public IEnumerable<UpdateJobFile> Files { get; set; }
 
-            public UpdateJobContext(int repositoryId, int revision, IEnumerable<UpdateJobFile> files)
+            public UpdateJobContext(int repositoryId, string node, int revision, IEnumerable<UpdateJobFile> files)
             {
                 RepositoryId = repositoryId;
+                Node = node;
                 Revision = revision;
                 Files = files;
             }
@@ -250,19 +264,20 @@ namespace OrchardHUN.ExternalPages.Services
         {
             Added,
             Modified,
-            Removed
+            Removed,
+            AddedOrModified // Needed for when Repopulate() is called: there we don't know wether a file was just created or is modified
         }
         #endregion
 
 
-        private BitbucketRepositorySettingsRecord GetRepositorySettingsOrThrow(int id)
+        private BitbucketRepositoryDataRecord GetRepositoryDataOrThrow(int id)
         {
             var repository = _repository.Get(id);
             if (repository == null) throw new ArgumentException("No repository exists with the following id: " + id);
             return repository;
         }
 
-        private static RestObjects PrepareRest(BitbucketRepositorySettingsRecord settings, string path)
+        private static RestObjects PrepareRest(BitbucketRepositoryDataRecord settings, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
             if (!String.IsNullOrEmpty(settings.Username)) client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
@@ -301,14 +316,14 @@ namespace OrchardHUN.ExternalPages.Services
         private class FileProcessor
         {
             private readonly BitbucketService _service;
-            private readonly BitbucketRepositorySettingsRecord _settings;
+            private readonly BitbucketRepositoryDataRecord _settings;
             private readonly IEnumerable<UrlMapping> _urlMappings;
             private readonly UpdateJobContext _jobContext;
 
 
             public FileProcessor(
                 BitbucketService service,
-                BitbucketRepositorySettingsRecord settings,
+                BitbucketRepositoryDataRecord settings,
                 UpdateJobContext jobContext)
             {
                 _service = service;
@@ -333,7 +348,7 @@ namespace OrchardHUN.ExternalPages.Services
 
                 ContentItem page = null;
 
-                if (file.Type == UpdateJobfileType.Added || file.Type == UpdateJobfileType.Modified)
+                if (file.Type != UpdateJobfileType.Removed)
                 {
                     var restObjects = PrepareRest(_settings, "src/" + _jobContext.Revision + "/" + file.Path);
                     var response = restObjects.Client.Execute<FileSrcResponse>(restObjects.Request);
@@ -341,7 +356,7 @@ namespace OrchardHUN.ExternalPages.Services
 
                     var src = response.Data;
 
-                    if (file.Type == UpdateJobfileType.Modified) page = FetchPage(file.Path);
+                    if (file.Type != UpdateJobfileType.Added) page = FetchPage(file.Path);
 
                     var isNew = page == null;
 
@@ -380,7 +395,7 @@ namespace OrchardHUN.ExternalPages.Services
                     _service._contentManager.Publish(page);
                     _service._contentManager.Flush();
                 }
-                else if (file.Type == UpdateJobfileType.Removed)
+                else
                 {
                     page = FetchPage(file.Path);
 

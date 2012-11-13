@@ -8,7 +8,7 @@ using Orchard.Environment.Extensions;
 namespace OrchardHUN.ExternalPages.Models
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public class BitbucketRepositorySettingsRecord
+    public class BitbucketRepositoryDataRecord
     {
         public virtual int Id { get; set; }
         public virtual string AccountName { get; set; }
@@ -21,9 +21,12 @@ namespace OrchardHUN.ExternalPages.Models
         [StringLengthMax]
         public virtual string UrlMappingsDefinition { get; set; }
 
-        public virtual string LastNode { get; set; }
+        public virtual string LastCheckedNode { get; set; }
+        public virtual int LastCheckedRevision { get; set; }
+        public virtual string LastProcessedNode { get; set; }
+        public virtual int LastProcessedRevision { get; set; }
 
-        public BitbucketRepositorySettingsRecord()
+        public BitbucketRepositoryDataRecord()
         {
             MaximalFileSizeKB = 1024;
         }
@@ -32,7 +35,7 @@ namespace OrchardHUN.ExternalPages.Models
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public static class RepositorySettingsRecordExtensions
     {
-        public static IEnumerable<UrlMapping> UrlMappings(this BitbucketRepositorySettingsRecord settings)
+        public static IEnumerable<UrlMapping> UrlMappings(this BitbucketRepositoryDataRecord settings)
         {
             if (String.IsNullOrEmpty(settings.UrlMappingsDefinition)) return Enumerable.Empty<UrlMapping>();
 
@@ -54,9 +57,9 @@ namespace OrchardHUN.ExternalPages.Models
             return mappings;
         }
 
-        public static bool IsPopulated(this BitbucketRepositorySettingsRecord settings)
+        public static bool WasChecked(this BitbucketRepositoryDataRecord settings)
         {
-            return !String.IsNullOrEmpty(settings.LastNode);
+            return !String.IsNullOrEmpty(settings.LastCheckedNode);
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using Orchard.Data.Migration;
+﻿using System;
+using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 
@@ -9,7 +10,7 @@ namespace OrchardHUN.ExternalPages.Migrations
     {
         public int Create()
         {
-            SchemaBuilder.CreateTable(typeof(BitbucketRepositorySettingsRecord).Name,
+            SchemaBuilder.CreateTable(typeof(BitbucketRepositoryDataRecord).Name,
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<string>("AccountName")
@@ -19,7 +20,10 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<bool>("MirrorFiles")
                     .Column<int>("MaximalFileSizeKB")
                     .Column<string>("UrlMappingsDefinition")
-                    .Column<string>("LastNode")
+                    .Column<string>("LastCheckedNode")
+                    .Column<int>("LastCheckedRevision")
+                    .Column<string>("LastProcessedNode")
+                    .Column<int>("LastProcessedRevision")
                 );
 
 

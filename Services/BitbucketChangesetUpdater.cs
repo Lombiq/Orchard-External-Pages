@@ -41,9 +41,9 @@ namespace OrchardHUN.ExternalPages.Services
             {
                 if (!lockFile.TryAcquire(TaskType)) return;
 
-                foreach (var repository in _bitbucketService.SettingsRepository.Table)
+                foreach (var repository in _bitbucketService.RepositoryDataRepository.Table)
                 {
-                    if (repository.IsPopulated()) _bitbucketService.CheckChangesets(repository.Id);
+                    if (repository.WasChecked()) _bitbucketService.CheckChangesets(repository.Id);
                 }
 
                 CreateTask();

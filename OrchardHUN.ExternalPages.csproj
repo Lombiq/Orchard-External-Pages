@@ -112,7 +112,7 @@
     <Compile Include="Handlers\MarkdownPagePartHandler.cs" />
     <Compile Include="Migrations\BaseMigrations.cs" />
     <Compile Include="Migrations\BitbucketMigrations.cs" />
-    <Compile Include="Models\BitbucketRepositorySettingsRecord.cs" />
+    <Compile Include="Models\BitbucketRepositoryDataRecord.cs" />
     <Compile Include="Models\BitbucketSettingsPart.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
@@ -130,7 +130,7 @@
     <Content Include="Views\Parts.MarkdownPage.Text.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\EditorTemplates\BitbucketRepositorySettingsRecord.cshtml" />
+    <Content Include="Views\EditorTemplates\BitbucketRepositoryDataRecord.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
