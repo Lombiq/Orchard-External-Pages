@@ -61,6 +61,11 @@ namespace OrchardHUN.ExternalPages.Models
         {
             return !String.IsNullOrEmpty(settings.LastCheckedNode);
         }
+
+        public static bool WasProcessed(this BitbucketRepositoryDataRecord settings)
+        {
+            return !String.IsNullOrEmpty(settings.LastProcessedNode);
+        }
     }
 
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]

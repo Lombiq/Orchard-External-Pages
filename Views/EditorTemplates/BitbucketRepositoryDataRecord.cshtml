@@ -24,6 +24,18 @@
                 <span class="hint">@T("This repository wasn't populated yet.")</span>
             }
             <span class="hint">@T("Bypassing changeset processing you can force a repopulation of the local storage from the repository. Make sure to set up url mappings properly first. Before this initial population the repository's content won't be pulled in so clicking this is necessary before the content will be auto-updated.")</span>
+            if (Model.WasProcessed())
+            {
+                @T("Open root urls:")
+                <ul>
+                    @foreach (var mapping in Model.UrlMappings())
+                    {
+                        var remoteUrl = "/" + mapping.RepoPath;
+                        var localUrl = Url.Content("~/" + mapping.LocalPath + "/");
+                        @Html.Link(remoteUrl + ": " + localUrl, localUrl)
+                    }
+                </ul>
+            }
         }
         <ol>
             <li>
