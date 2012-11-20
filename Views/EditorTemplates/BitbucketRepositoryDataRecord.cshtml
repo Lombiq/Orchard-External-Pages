@@ -23,7 +23,7 @@
             {
                 <span class="hint">@T("This repository wasn't populated yet.")</span>
             }
-            <span class="hint">@T("Bypassing changeset processing you can force a repopulation of the local storage from the repository. Make sure to set up url mappings properly first. Before this initial population the repository's content won't be pulled in so clicking this is necessary before the content will be auto-updated.")</span>
+            <span class="hint">@T("Bypassing changeset processing you can force a repopulation of the local storage from the repository's current state. Make sure to set up url mappings properly first. Before the initial population the repository's content won't be pulled in so clicking this is necessary before the content will be auto-updated.")</span>
             if (Model.WasProcessed())
             {
                 @T("Open root urls:")
@@ -62,11 +62,13 @@
                 @Html.EditorFor(m => m.MirrorFiles)
                 <label for="@Html.FieldIdFor(m => m.MirrorFiles)" class="forcheckbox">@T("Mirror files")</label>
                 @Html.ValidationMessageFor(m => m.MirrorFiles)
+                <span class="hint">@T("Check to download non-markdown files (like images, documents...) to the Orchard file system so you can access them from under a local url. Markdown files will be downloaded and converted to content items regardless of this option.")</span>
             </li>
             <li>
                 @Html.LabelFor(m => m.MaximalFileSizeKB, T("Maximal file size (in KB)"))
                 @Html.TextBoxFor(m => m.MaximalFileSizeKB, new { @class = "text-small" })
                 @Html.ValidationMessageFor(m => m.MaximalFileSizeKB)
+                <span class="hint">@T("Define a maximal file size for non-markdown files. If a file to be mirrored locally is too large the background task downloading it can time out.")</span>
             </li>
             <li>
                 @Html.LabelFor(m => m.UrlMappingsDefinition, T("Url mappings"))

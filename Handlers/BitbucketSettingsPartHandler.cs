@@ -35,8 +35,8 @@ namespace OrchardHUN.ExternalPages.Handlers
 
             base.GetItemMetadata(context);
 
-            var groupInfo = new GroupInfo(T("External Pages Settings")); // Addig a new group to the "Settings" menu.
-            groupInfo.Id = "ExternalPagesSettings";
+            var groupInfo = new GroupInfo(T("External Pages")); // Addig a new group to the "Settings" menu.
+            groupInfo.Id = "ExternalPages";
             context.Metadata.EditorGroupInfo.Add(groupInfo);
         }
     }

@@ -43,7 +43,7 @@ namespace OrchardHUN.ExternalPages.Drivers
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts.BitbucketSettings.SiteSettings",
                     Model: part,
-                    Prefix: Prefix)).OnGroup("ExternalPagesSettings");
+                    Prefix: Prefix)).OnGroup("ExternalPages");
         }
 
         // POST
