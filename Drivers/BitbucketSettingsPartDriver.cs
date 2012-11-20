@@ -6,13 +6,14 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Models;
+using OrchardHUN.ExternalPages.Services;
 
 namespace OrchardHUN.ExternalPages.Drivers
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketSettingsPartDriver : ContentPartDriver<BitbucketSettingsPart>
     {
-        private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
+        private readonly IBitbucketService _bitbucketService;
         private readonly INotifier _notifier;
 
         protected override string Prefix
@@ -24,10 +25,10 @@ namespace OrchardHUN.ExternalPages.Drivers
 
 
         public BitbucketSettingsPartDriver(
-            IRepository<BitbucketRepositoryDataRecord> repository,
+            IBitbucketService bitbucketService,
             INotifier notifier)
         {
-            _repository = repository;
+            _bitbucketService = bitbucketService;
             _notifier = notifier;
 
             T = NullLocalizer.Instance;
@@ -53,27 +54,33 @@ namespace OrchardHUN.ExternalPages.Drivers
             {
                 foreach (var repository in part.Repositories)
                 {
-                    var original = _repository.Get(repository.Id);
-                    if (original != null)
+                    var savedRepository = _bitbucketService.RepositoryDataRepository.Get(repository.Id);
+                    if (savedRepository != null)
                     {
-                        original.AccountName = repository.AccountName;
-                        original.Slug = repository.Slug;
-                        original.Username = repository.Username;
-                        if (!String.IsNullOrEmpty(repository.Password) || String.IsNullOrEmpty(repository.Username)) original.Password = repository.Password;
-                        original.MirrorFiles = repository.MirrorFiles;
-                        original.MaximalFileSizeKB = repository.MaximalFileSizeKB;
-                        original.UrlMappingsDefinition = repository.UrlMappingsDefinition;
+                        savedRepository.AccountName = repository.AccountName;
+                        savedRepository.Slug = repository.Slug;
+                        savedRepository.Username = repository.Username;
+                        if (!String.IsNullOrEmpty(repository.Password) || String.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
+                        savedRepository.MirrorFiles = repository.MirrorFiles;
+                        savedRepository.MaximalFileSizeKB = repository.MaximalFileSizeKB;
+
+                        if (savedRepository.UrlMappingsDefinition != repository.UrlMappingsDefinition)
+                        {
+                            savedRepository.UrlMappingsDefinition = repository.UrlMappingsDefinition;
+
+
+                        }
                     }
                 }
             }
 
             if (part.NewRepository != null && !String.IsNullOrEmpty(part.NewRepository.AccountName))
             {
-                _repository.Create(part.NewRepository);
+                _bitbucketService.RepositoryDataRepository.Create(part.NewRepository);
                 _notifier.Information(T("The new repository entry was created. Before it wil be updated you should populate it first."));
             }
 
-            _repository.Flush();
+            _bitbucketService.RepositoryDataRepository.Flush();
 
             return Editor(part, shapeHelper);
         }
