@@ -6,6 +6,7 @@ using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Services;
 using Orchard.Exceptions;
+using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Controllers
 {

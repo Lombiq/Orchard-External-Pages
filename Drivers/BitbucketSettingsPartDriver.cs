@@ -7,6 +7,7 @@ using Orchard.Localization;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Models;
 using OrchardHUN.ExternalPages.Services;
+using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Drivers
 {

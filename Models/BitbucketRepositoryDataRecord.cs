@@ -29,6 +29,8 @@ namespace OrchardHUN.ExternalPages.Models
         public BitbucketRepositoryDataRecord()
         {
             MaximalFileSizeKB = 1024;
+            LastCheckedRevision = -1;
+            LastProcessedRevision = -1;
         }
     }
 

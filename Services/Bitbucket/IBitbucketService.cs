@@ -2,7 +2,7 @@
 using Orchard.Data;
 using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.ExternalPages.Services
+namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     public interface IBitbucketService : IDependency
     {

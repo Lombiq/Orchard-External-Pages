@@ -87,6 +87,10 @@
       <Project>{9916839c-39fc-4ceb-a5af-89ca7e87119f}</Project>
       <Name>Orchard.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orchard.Alias\Orchard.Alias.csproj">
+      <Project>{475b6c45-b27c-438b-8966-908b9d6d1077}</Project>
+      <Name>Orchard.Alias</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Orchard.Autoroute\Orchard.Autoroute.csproj">
       <Project>{66fccd76-2761-47e3-8d11-b45d0001ddaa}</Project>
       <Name>Orchard.Autoroute</Name>
@@ -105,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BitbucketAdminController.cs" />
+    <Compile Include="Controllers\RepositoryFileController.cs" />
     <Compile Include="Drivers\BitbucketSettingsPartDriver.cs" />
     <Compile Include="Drivers\MarkdownPagePartDriver.cs" />
     <Compile Include="Handlers\BitbucketSettingsPartHandler.cs" />
@@ -116,10 +121,17 @@
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="RestClientExtensions.cs" />
-    <Compile Include="Services\BitbucketChangesetProcessor.cs" />
-    <Compile Include="Services\BitbucketService.cs" />
-    <Compile Include="Services\BitbucketChangesetUpdater.cs" />
-    <Compile Include="Services\IBitbucketService.cs" />
+    <Compile Include="Services\Bitbucket\ApiClasses.cs" />
+    <Compile Include="Services\Bitbucket\ApiHelper.cs" />
+    <Compile Include="Services\Bitbucket\BitbucketChangesetProcessor.cs" />
+    <Compile Include="Services\Bitbucket\BitbucketService.cs" />
+    <Compile Include="Services\Bitbucket\BitbucketChangesetUpdater.cs" />
+    <Compile Include="Services\Bitbucket\FileProcessor.cs" />
+    <Compile Include="Services\Bitbucket\IBitbucketService.cs" />
+    <Compile Include="Services\Bitbucket\IFileProcessor.cs" />
+    <Compile Include="Services\Bitbucket\JobClasses.cs" />
+    <Compile Include="Services\IRepositoryFileService.cs" />
+    <Compile Include="Services\RepositoryFileService.cs" />
     <Compile Include="WellKnownConstants.cs" />
   </ItemGroup>
   <ItemGroup>

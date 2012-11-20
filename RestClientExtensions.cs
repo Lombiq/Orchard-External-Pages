@@ -7,6 +7,7 @@ using RestSharp;
 
 namespace OrchardHUN.ExternalPages
 {
+    // For future use
     public static class RestClientExtensions
     {
         public static Task<IRestResponse> GetResponseAsync(this RestClient client, IRestRequest request)

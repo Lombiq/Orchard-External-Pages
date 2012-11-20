@@ -7,7 +7,7 @@ using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
 using OrchardHUN.ExternalPages.Models;
 
-namespace OrchardHUN.ExternalPages.Services
+namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents

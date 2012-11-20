@@ -5,7 +5,7 @@ using System.Web;
 using Orchard.Environment.Extensions;
 using Orchard.Tasks;
 
-namespace OrchardHUN.ExternalPages.Services
+namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketChangesetProcessor : IBackgroundTask
