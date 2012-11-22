@@ -2,7 +2,7 @@
 AntiForgery: enabled
 Author: The Orchard Hungary Team
 Website: http://orchardexternalpages.codeplex.com
-Version: 1.0
+Version: 0.9
 OrchardVersion: 1.6
 Description: Deals with aggregating pages from external sources
 Features:
