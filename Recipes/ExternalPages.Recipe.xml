@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<Orchard>
+  <Recipe>
+    <Name>External Pages dependency installation recipe</Name>
+    <Description>This recipe will install the dependencies of External Pages so you don't have to install them yourself.</Description>
+    <Author>The Orchard Hungary Team</Author>
+    <WebSite>http://orchardexternalpages.codeplex.com/</WebSite>
+    <Tags/>
+    <Version>1.0</Version>
+  </Recipe>
+  <Module packageId="Orchard.Module.Piedone.HelpfulLibraries"/>
+  <Feature enable="Piedone.HelpfulLibraries"/>
+</Orchard>
