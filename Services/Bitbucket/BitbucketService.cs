@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.Autoroute.Models;
-using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
-using RestSharp;
-using Orchard.Core.Title.Models;
-using Orchard.Core.Common.Models;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.IO;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Web.Mvc;
 using Orchard.Environment.Extensions;
+using Orchard.Exceptions;
 using Orchard.Localization;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
-using OrchardHUN.ExternalPages.Services;
-using Orchard.Exceptions;
 using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Controllers

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Orchard;
+﻿using Orchard;
 using Orchard.FileSystems.Media;
 
 namespace OrchardHUN.ExternalPages.Services

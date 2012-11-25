@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Orchard.FileSystems.Media;
-using Orchard.Exceptions;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+﻿using System.Web.Mvc;
 using OrchardHUN.ExternalPages.Services;
-using System.IO;
+using Piedone.HelpfulLibraries.Libraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Controllers
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using Orchard.Data.Migration;
+﻿using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 

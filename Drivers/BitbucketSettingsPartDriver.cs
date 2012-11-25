@@ -1,12 +1,10 @@
 ﻿using System;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
-using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Models;
-using OrchardHUN.ExternalPages.Services;
 using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Drivers

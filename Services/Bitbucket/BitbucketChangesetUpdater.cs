@@ -1,11 +1,10 @@
-﻿using System;
-using Orchard.Environment;
+﻿using Orchard.Environment;
 using Orchard.Environment.Extensions;
 using Orchard.Services;
 using Orchard.Tasks.Scheduling;
+using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
-using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
