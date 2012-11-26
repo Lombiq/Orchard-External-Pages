@@ -45,20 +45,20 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     if (repository.WasChecked()) _bitbucketService.CheckChangesets(repository.Id);
                 }
 
-                CreateTask();
+                Renew();
             }
         }
 
         public void Activated()
         {
-            CreateTask();
+            Renew();
         }
 
         public void Terminating()
         {
         }
 
-        private void CreateTask()
+        private void Renew()
         {
             _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(10), null);
         }
