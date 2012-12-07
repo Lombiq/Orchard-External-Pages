@@ -16,6 +16,14 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return response.Data;
         }
 
+        public static byte[] GetResponse(BitbucketRepositoryDataRecord repositoryData, string path)
+        {
+            var restObjects = PrepareRest(repositoryData, path);
+            var response = restObjects.Client.Execute(restObjects.Request);
+            ThrowIfBadResponse(restObjects.Request, response);
+            return response.RawBytes;
+        }
+
         public static RestObjects PrepareRest(BitbucketRepositoryDataRecord repositoryData, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");

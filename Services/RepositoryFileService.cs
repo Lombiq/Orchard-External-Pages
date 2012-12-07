@@ -22,15 +22,14 @@ namespace OrchardHUN.ExternalPages.Services
         }
 
 
-        public void SaveFile(string path, string content)
+        public void SaveFile(string path, byte[] content)
         {
             var file = GetFile(path);
             if (file == null) file = _storageProvider.CreateFile(PathToStoragePath(path));
 
             using (var stream = file.OpenWrite())
             {
-                var bytes = Encoding.UTF8.GetBytes(content);
-                stream.Write(bytes, 0, bytes.Length);
+                stream.Write(content, 0, content.Length);
             }
 
             var fileRoute = new RouteValueDictionary

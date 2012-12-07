@@ -5,7 +5,7 @@ namespace OrchardHUN.ExternalPages.Services
 {
     public interface IRepositoryFileService : IDependency
     {
-        void SaveFile(string path, string content);
+        void SaveFile(string path, byte[] content);
         IStorageFile GetFile(string path);
         void DeleteFile(string path);
     }

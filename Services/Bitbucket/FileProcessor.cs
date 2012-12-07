@@ -68,7 +68,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 var sizeProbe = ApiHelper.GetResponse<FolderSrcResponse>(repoData, "src/" + jobContext.Revision + "/" + Path.GetDirectoryName(file.Path));
                 var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
                 if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, ApiHelper.GetResponse<FileSrcResponse>(repoData, "src/" + jobContext.Revision + "/" + file.Path).Data);
+                _fileService.SaveFile(localPath, ApiHelper.GetResponse(repoData, "raw/" + jobContext.Revision + "/" + file.Path));
             }
             else
             {
