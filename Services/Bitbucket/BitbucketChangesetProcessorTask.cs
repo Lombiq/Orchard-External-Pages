@@ -4,12 +4,12 @@ using Orchard.Tasks;
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public class BitbucketChangesetProcessor : IBackgroundTask
+    public class BitbucketChangesetProcessorTask : IBackgroundTask
     {
         private readonly IBitbucketService _bitbucketService;
 
 
-        public BitbucketChangesetProcessor(IBitbucketService bitbucketService)
+        public BitbucketChangesetProcessorTask(IBitbucketService bitbucketService)
         {
             _bitbucketService = bitbucketService;
         }
