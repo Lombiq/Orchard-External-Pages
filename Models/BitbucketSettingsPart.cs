@@ -6,8 +6,14 @@ using Orchard.Environment.Extensions;
 namespace OrchardHUN.ExternalPages.Models
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public class BitbucketSettingsPart : ContentPart
+    public class BitbucketSettingsPart : ContentPart<BitbucketSettingsPartRecord> 
     {
+        public int MinutesBetweenPulls
+        {
+            get { return Record.MinutesBetweenPulls; }
+            set { Record.MinutesBetweenPulls = value; }
+        }
+
         private readonly LazyField<IList<BitbucketRepositoryDataRecord>> _repositories = new LazyField<IList<BitbucketRepositoryDataRecord>>();
         public LazyField<IList<BitbucketRepositoryDataRecord>> RepositoriesField { get { return _repositories; } }
         public IList<BitbucketRepositoryDataRecord> Repositories

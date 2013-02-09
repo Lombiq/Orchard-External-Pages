@@ -17,6 +17,7 @@ namespace OrchardHUN.ExternalPages.Models
         public virtual string Password { get; set; }
         public virtual bool MirrorFiles { get; set; }
         public virtual int MaximalFileSizeKB { get; set; }
+        
 
         [StringLengthMax]
         public virtual string UrlMappingsDefinition { get; set; }

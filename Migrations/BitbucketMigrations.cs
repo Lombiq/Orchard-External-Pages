@@ -23,10 +23,28 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<int>("LastCheckedRevision")
                     .Column<string>("LastProcessedNode")
                     .Column<int>("LastProcessedRevision")
-                );
+            );
+
+            SchemaBuilder.CreateTable(typeof(BitbucketSettingsPartRecord).Name,
+                table => table
+                    .ContentPartRecord()
+                    .Column<int>("MinutesBetweenPulls")
+            );
 
 
-            return 1;
+            return 2;
+        }
+
+        public int UpdateFrom1()
+        {
+            SchemaBuilder.CreateTable(typeof(BitbucketSettingsPartRecord).Name,
+                table => table
+                    .ContentPartRecord()
+                    .Column<int>("MinutesBetweenPulls")
+            );
+
+
+            return 2;
         }
     }
 }

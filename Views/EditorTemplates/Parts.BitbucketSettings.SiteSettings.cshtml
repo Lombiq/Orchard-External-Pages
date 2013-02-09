@@ -17,6 +17,17 @@
         </li>
     </ol>
     <span class="hint">@T("Repositories with no username and password defined will only work if they're public.")</span>
+    <fieldset>
+        <legend>@T("General Settings")</legend>
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.MinutesBetweenPulls, T("Minutes between pulls"))
+                @Html.TextBoxFor(m => m.MinutesBetweenPulls, new { @class = "text-small" })
+                @Html.ValidationMessageFor(m => m.MinutesBetweenPulls)
+                <span class="hint">@T("New changesets from the repositories are pulled in with the frequency specified here (0 means every time the task runs; practically this is every minute). Note that after the changesets are pulled in they should be processed (one changeset every minute) so changes won't appear immediately after they're pulled in.")</span>
+            </li>
+        </ol>
+    </fieldset>
 </fieldset>
 
 @using (Script.Foot())

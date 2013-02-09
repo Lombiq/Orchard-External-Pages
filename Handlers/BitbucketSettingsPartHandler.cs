@@ -15,13 +15,16 @@ namespace OrchardHUN.ExternalPages.Handlers
         public Localizer T { get; set; }
 
 
-        public BitbucketSettingsPartHandler(Work<IRepository<BitbucketRepositoryDataRecord>> repositoryWork)
+        public BitbucketSettingsPartHandler(
+            IRepository<BitbucketSettingsPartRecord> repository,
+            Work<IRepository<BitbucketRepositoryDataRecord>> bbRepositoryWork)
         {
+            Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<BitbucketSettingsPart>("Site"));
 
             OnActivated<BitbucketSettingsPart>((context, part) =>
             {
-                part.RepositoriesField.Loader(() => repositoryWork.Value.Table.ToList());
+                part.RepositoriesField.Loader(() => bbRepositoryWork.Value.Table.ToList());
             });
 
             T = NullLocalizer.Instance;
