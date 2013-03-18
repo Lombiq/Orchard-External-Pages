@@ -122,6 +122,7 @@
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="RestClientExtensions.cs" />
+    <Compile Include="Routes\BitbucketRoutes.cs" />
     <Compile Include="Services\Bitbucket\ApiClasses.cs" />
     <Compile Include="Services\Bitbucket\ApiHelper.cs" />
     <Compile Include="Services\Bitbucket\BitbucketChangesetProcessorTask.cs" />
