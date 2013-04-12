@@ -7,14 +7,16 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         public int RepositoryId { get; private set; }
         public string Node { get; private set; }
         public int Revision { get; private set; }
-        public IEnumerable<UpdateJobFile> Files { get; set; }
+        public IEnumerable<UpdateJobFile> Files { get; private set; }
+        public bool IsRepopulation { get; private set; }
 
-        public UpdateJobContext(int repositoryId, string node, int revision, IEnumerable<UpdateJobFile> files)
+        public UpdateJobContext(int repositoryId, string node, int revision, IEnumerable<UpdateJobFile> files, bool isRepopulation)
         {
             RepositoryId = repositoryId;
             Node = node;
             Revision = revision;
             Files = files;
+            IsRepopulation = isRepopulation;
         }
     }
 

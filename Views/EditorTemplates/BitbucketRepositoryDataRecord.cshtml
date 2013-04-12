@@ -31,8 +31,10 @@
                     @foreach (var mapping in Model.UrlMappings())
                     {
                         var remoteUrl = "/" + mapping.RepoPath;
-                        var localUrl = Url.Content("~/" + mapping.LocalPath + "/");
-                        @Html.Link(remoteUrl + ": " + localUrl, localUrl)
+                        var localUrl = Url.Content("~/" + mapping.LocalPath);
+                        <li>
+                            @Html.Link(remoteUrl + ": " + localUrl, localUrl)
+                        </li>
                     }
                 </ul>
             }

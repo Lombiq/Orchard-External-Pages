@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
+using Piedone.HelpfulLibraries.Libraries.Utilities;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
@@ -45,34 +47,45 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = ApiHelper.GetResponse<FolderSrcResponse>(repoData, "src/" + lastChangeset.Revision + "/" + path);
+                    var responseData = ApiHelper.GetResponse<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
+
+                    if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 
                     if (responseData.Directories.Count == 0) return responseData.Files;
 
                     var files = new List<FolderSrcFile>();
                     foreach (var directory in responseData.Directories)
                     {
-                        files.AddRange(recursivelyFetchFileList(path + directory + "/"));
+                        files.AddRange(recursivelyFetchFileList(UriHelper.Combine(path, directory)));
                     }
                     files.AddRange(responseData.Files);
+
                     return files;
                 };
 
             foreach (var mapping in repoData.UrlMappings())
             {
-                var files = recursivelyFetchFileList(mapping.RepoPath + "/");
+                var jobFiles = new List<UpdateJobFile>();
 
-                var jobFiles = new List<UpdateJobFile>(files.Count);
-                foreach (var file in files)
+                if (!mapping.RepoPath.IsMarkdownFilePath())
                 {
-                    jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.AddedOrModified));
+                    var files = recursivelyFetchFileList(mapping.RepoPath);
+                    foreach (var file in files)
+                    {
+                        jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.AddedOrModified));
+                    } 
+                }
+                else
+                {
+                    jobFiles.Add(new UpdateJobFile(mapping.RepoPath, UpdateJobfileType.AddedOrModified));
                 }
 
                 var jobContext = new UpdateJobContext(
                                     repositoryId,
                                     lastChangeset.Node,
                                     lastChangeset.Revision,
-                                    jobFiles);
+                                    jobFiles,
+                                    true);
 
                 _jobManager.CreateJob(Industry, jobContext, 99);
             }
@@ -127,7 +140,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                                         repositoryId,
                                         changeset.Node,
                                         changeset.Revision,
-                                        jobFiles);
+                                        jobFiles,
+                                        false);
 
                     _jobManager.CreateJob(Industry, jobContext, 0);
                 }
@@ -151,7 +165,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 return;
             }
 
-            if (jobContext.Revision <= repoData.LastProcessedRevision)
+            // If it's a repopulation we'll have multiple jobs with the same revsion for each mapping, that's why the second clause
+            if (jobContext.Revision <= repoData.LastProcessedRevision && !jobContext.IsRepopulation)
             {
                 _jobManager.Done(job);
                 return;

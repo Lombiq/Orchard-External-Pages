@@ -1,6 +1,7 @@
 ﻿using System;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
+using Piedone.HelpfulLibraries.Libraries.Utilities;
 using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
@@ -28,7 +29,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
             if (!String.IsNullOrEmpty(repositoryData.Username)) client.Authenticator = new HttpBasicAuthenticator(repositoryData.Username, repositoryData.Password);
-            var request = new RestRequest("repositories/" + repositoryData.AccountName + "/" + repositoryData.Slug + "/" + path);
+            var request = new RestRequest(UriHelper.Combine("repositories", repositoryData.AccountName, repositoryData.Slug, path));
             return new RestObjects(client, request);
         }
 

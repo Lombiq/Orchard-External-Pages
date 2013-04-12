@@ -134,6 +134,7 @@
     <Compile Include="Services\Bitbucket\JobClasses.cs" />
     <Compile Include="Services\IRepositoryFileService.cs" />
     <Compile Include="Services\RepositoryFileService.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="WellKnownConstants.cs" />
   </ItemGroup>
   <ItemGroup>

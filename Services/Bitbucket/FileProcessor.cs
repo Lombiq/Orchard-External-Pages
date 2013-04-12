@@ -9,6 +9,7 @@ using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
+using Piedone.HelpfulLibraries.Libraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -51,11 +52,11 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             if (mapping == null) return;
 
             var localPath = file.Path;
-            if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath);
-            else localPath = mapping.LocalPath + "/" + localPath;
+            if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath.Trim('/'));
+            else localPath = UriHelper.Combine(mapping.LocalPath, localPath);
 
-            if (file.Path.EndsWith(".md")) ProcessPage(file, localPath, repoData, jobContext);
-            else if(repoData.MirrorFiles) ProcessFile(file, localPath, repoData, jobContext);
+            if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, jobContext);
+            else if (repoData.MirrorFiles) ProcessFile(file, localPath, repoData, jobContext);
         }
 
 
@@ -65,10 +66,10 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var sizeProbe = ApiHelper.GetResponse<FolderSrcResponse>(repoData, "src/" + jobContext.Revision + "/" + Path.GetDirectoryName(file.Path));
+                var sizeProbe = ApiHelper.GetResponse<FolderSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
                 var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
                 if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, ApiHelper.GetResponse(repoData, "raw/" + jobContext.Revision + "/" + file.Path));
+                _fileService.SaveFile(localPath, ApiHelper.GetResponse(repoData, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
             }
             else
             {
@@ -84,7 +85,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var src = ApiHelper.GetResponse<FileSrcResponse>(repoData, "src/" + jobContext.Revision + "/" + file.Path);
+                var src = ApiHelper.GetResponse<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
                 if (file.Type != UpdateJobfileType.Added) page = FetchPage(file.Path);
 
