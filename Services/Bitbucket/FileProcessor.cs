@@ -111,7 +111,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 while (!titleFound && i < lines.Length)
                 {
                     // If this line consists of just equals signs, the above line is a H1
-                    if (Regex.IsMatch(lines[i], "^[=]*$"))
+                    if (Regex.IsMatch(lines[i], "^[=]+$"))
                     {
                         page.As<TitlePart>().Title = lines[i - 1];
                         titleFound = true;
