@@ -18,7 +18,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<string>("Password")
                     .Column<bool>("MirrorFiles")
                     .Column<int>("MaximalFileSizeKB")
-                    .Column<string>("UrlMappingsDefinition")
+                    .Column<string>("UrlMappingsDefinition", column => column.Unlimited())
                     .Column<string>("LastCheckedNode")
                     .Column<int>("LastCheckedRevision")
                     .Column<string>("LastProcessedNode")
@@ -32,7 +32,7 @@ namespace OrchardHUN.ExternalPages.Migrations
             );
 
 
-            return 2;
+            return 3;
         }
 
         public int UpdateFrom1()
@@ -45,6 +45,17 @@ namespace OrchardHUN.ExternalPages.Migrations
 
 
             return 2;
+        }
+
+        public int UpdateFrom2()
+        {
+            SchemaBuilder.AlterTable(typeof(BitbucketRepositoryDataRecord).Name,
+                table => table
+                    .AlterColumn("UrlMappingsDefinition", column => column.WithType(System.Data.DbType.String).Unlimited())
+            );
+
+
+            return 3;
         }
     }
 }
