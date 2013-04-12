@@ -110,10 +110,16 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 var titleFound = false;
                 while (!titleFound && i < lines.Length)
                 {
-                    // If this line consists of just equals signs, the above line is a title
+                    // If this line consists of just equals signs, the above line is a H1
                     if (Regex.IsMatch(lines[i], "^[=]*$"))
                     {
                         page.As<TitlePart>().Title = lines[i - 1];
+                        titleFound = true;
+                    }
+                    // Or if it starts with a single hashmark
+                    else if (lines[i - 1].StartsWith("#"))
+                    {
+                        page.As<TitlePart>().Title = lines[i - 1].Substring(1).Trim();
                         titleFound = true;
                     }
 
