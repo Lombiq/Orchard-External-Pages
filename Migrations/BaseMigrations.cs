@@ -12,7 +12,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 table => table
                     .ContentPartRecord()
                     .Column<string>("Text", column => column.Unlimited())
-                    .Column<string>("RepoPath")
+                    .Column<string>("RepoPath", column => column.Unique())
                 )
                 .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
@@ -33,5 +33,8 @@ namespace OrchardHUN.ExternalPages.Migrations
 
             return 1;
         }
+
+
+
     }
 }
