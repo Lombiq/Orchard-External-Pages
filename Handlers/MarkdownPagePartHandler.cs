@@ -10,16 +10,6 @@ namespace OrchardHUN.ExternalPages.Handlers
         public MarkdownPagePartHandler(IRepository<MarkdownPagePartRecord> repository)
         {
             Filters.Add(StorageFilter.For(repository));
-
-            OnIndexing<MarkdownPagePart>((context, part) =>
-            {
-                context.DocumentIndex.Add("markdownText", part.Text).RemoveTags().Analyze();
-            });
-
-            OnActivated<MarkdownPagePart>((context, part) =>
-            {
-                part.HtmlField.Loader(() => new Markdown().Transform(part.Text));
-            });
         }
     }
 }

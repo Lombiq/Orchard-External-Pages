@@ -138,12 +138,6 @@
     <Compile Include="WellKnownConstants.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Parts.MarkdownPage.Text.Summary.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Parts.MarkdownPage.Text.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\EditorTemplates\BitbucketRepositoryDataRecord.cshtml" />
   </ItemGroup>
   <ItemGroup />

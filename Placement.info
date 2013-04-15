@@ -1,9 +1,3 @@
 ﻿<Placement>
   <Place Parts_BitbucketSettings_SiteSettings="Content:5"/>
-  <Match DisplayType="Detail">
-    <Place Parts_MarkdownPage_Text="Content:5"/>
-  </Match>
-  <Match DisplayType="Summary">
-    <Place Parts_MarkdownPage_Text_Summary="Content:5"/>
-  </Match>
 </Placement>

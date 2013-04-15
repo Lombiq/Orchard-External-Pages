@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Orchard.Autoroute.Models;
 using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
@@ -102,29 +103,35 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     page.As<MarkdownPagePart>().RepoPath = file.Path;
                 }
 
-                page.As<MarkdownPagePart>().Text = src.Data;
-
                 // Searching for the (first) title in the markdown text
-                var lines = Regex.Split(src.Data, "\r\n|\r|\n");
+                var lines = Regex.Split(src.Data, "\r\n|\r|\n").ToList();
                 int i = 1;
                 var titleFound = false;
-                while (!titleFound && i < lines.Length)
+                while (!titleFound && i < lines.Count)
                 {
                     // If this line consists of just equals signs, the above line is a H1
                     if (Regex.IsMatch(lines[i], "^[=]+$"))
                     {
                         page.As<TitlePart>().Title = lines[i - 1];
                         titleFound = true;
+                        lines.RemoveAt(i - 1);
+                        lines.RemoveAt(i);
                     }
                     // Or if it starts with a single hashmark
                     else if (lines[i - 1].StartsWith("#"))
                     {
                         page.As<TitlePart>().Title = lines[i - 1].Substring(1).Trim();
                         titleFound = true;
+                        lines.RemoveAt(i - 1);
                     }
 
                     i++;
                 }
+
+                // Cleaning leading line breaks
+                while (lines.Count > 0 && string.IsNullOrEmpty(lines[0].Trim())) lines.RemoveAt(0);
+
+                page.As<BodyPart>().Text = string.Join(Environment.NewLine, lines);
 
                 // This is needed after the title is set, because slug generation needs it
                 if (isNew) _contentManager.Create(page);

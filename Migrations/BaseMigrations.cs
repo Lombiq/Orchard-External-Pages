@@ -1,4 +1,5 @@
-﻿using Orchard.ContentManagement.MetaData;
+﻿using Orchard.ContentManagement;
+using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
 using OrchardHUN.ExternalPages.Models;
 
@@ -11,7 +12,6 @@ namespace OrchardHUN.ExternalPages.Migrations
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
                     .ContentPartRecord()
-                    .Column<string>("Text", column => column.Unlimited())
                     .Column<string>("RepoPath", column => column.Unique())
                 )
                 .AlterTable(typeof(MarkdownPagePartRecord).Name,
@@ -28,13 +28,30 @@ namespace OrchardHUN.ExternalPages.Migrations
                         .WithSetting("AutorouteSettings.PatternDefinitions", "[{Name:'Title', Pattern: '{Content.Slug}', Description: 'my-page'}]")
                         .WithSetting("AutorouteSettings.DefaultPatternIndex", "0"))
                     .WithPart(typeof(MarkdownPagePart).Name)
+                    .WithPart("BodyPart", builder => builder
+                        .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
             );
 
 
-            return 1;
+            return 2;
         }
 
 
+        public int UpdateFrom1()
+        {
+            SchemaBuilder.AlterTable(typeof(MarkdownPagePartRecord).Name,
+                table => table
+                .DropColumn("Text")
+            );
 
+            ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
+                cfg => cfg
+                    .WithPart("BodyPart", builder => builder
+                        .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
+            );
+
+
+            return 2;
+        }
     }
 }

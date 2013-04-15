@@ -10,7 +10,7 @@ Features:
 		Name: External Pages
         Description: Deals with aggregating pages from external sources
 		Category: Content
-		Dependencies: Orchard.Alias, Orchard.Autoroute, Title
+		Dependencies: Markdown, Orchard.Alias, Orchard.Autoroute, Title
     OrchardHUN.ExternalPages.Bitbucket:
 		Name: External Pages: Bitbucket
         Description: Aggregates pages from a Bitbucket repository
