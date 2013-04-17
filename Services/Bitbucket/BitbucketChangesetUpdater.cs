@@ -45,27 +45,27 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             {
                 if (!lockFile.TryAcquire(TaskType)) return;
 
+                Renew(true);
+
                 foreach (var repository in _bitbucketService.RepositoryDataRepository.Table)
                 {
                     if (repository.WasChecked()) _bitbucketService.CheckChangesets(repository.Id);
                 }
-
-                Renew();
             }
         }
 
         public void Activated()
         {
-            Renew();
+            Renew(false);
         }
 
         public void Terminating()
         {
         }
 
-        private void Renew()
+        private void Renew(bool calledFromTaskProcess)
         {
-            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(_siteService.GetSiteSettings().As<BitbucketSettingsPart>().MinutesBetweenPulls), null);
+            _scheduledTaskManager.CreateTaskIfNew(TaskType, _clock.UtcNow.AddMinutes(_siteService.GetSiteSettings().As<BitbucketSettingsPart>().MinutesBetweenPulls), null, calledFromTaskProcess);
         }
     }
 }
