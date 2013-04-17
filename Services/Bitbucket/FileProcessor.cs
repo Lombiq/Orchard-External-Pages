@@ -20,6 +20,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IContentManager _contentManager;
         private readonly IRepositoryFileService _fileService;
+        private readonly Dictionary<string, ContentItem> _parentPagesCache = new Dictionary<string, ContentItem>();
 
 
         public FileProcessor(
@@ -40,7 +41,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             var urlMappings = repoData.UrlMappings();
 
-            foreach (var file in jobContext.Files)
+            // Ordering so files on the top of the folder hierarchy and index files are first. This way subsequent files will be able to find 
+            // their parent.
+            foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.EndsWith("Index.md") ? 0 : 1))
             {
                 Process(file, urlMappings, repoData, jobContext);
             }
@@ -81,6 +84,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
         {
             localPath = localPath.Replace("Index", "").Replace(".md", "");
+            var repoBasePath = UriHelper.Combine("bitbucket.org", repoData.AccountName, repoData.Slug);
+            var fullRepoFilePath = UriHelper.Combine(repoBasePath, file.Path);
 
             ContentItem page = null;
 
@@ -88,7 +93,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             {
                 var src = ApiHelper.GetResponse<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
-                if (file.Type != UpdateJobfileType.Added) page = FetchPage(file.Path);
+                if (file.Type != UpdateJobfileType.Added) page = FetchPage(fullRepoFilePath);
 
                 var isNew = page == null;
 
@@ -100,7 +105,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     autoroutePart.CustomPattern = localPath;
                     autoroutePart.UseCustomPattern = true;
                     autoroutePart.DisplayAlias = localPath;
-                    page.As<MarkdownPagePart>().RepoPath = file.Path;
+                    page.As<MarkdownPagePart>().RepoPath = fullRepoFilePath;
                 }
 
                 // Searching for the (first) title in the markdown text
@@ -133,6 +138,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
                 page.As<BodyPart>().Text = string.Join(Environment.NewLine, lines);
 
+                var parent = FindParent(repoBasePath, fullRepoFilePath);
+                if (parent != null) page.As<CommonPart>().Container = parent;
+
                 // This is needed after the title is set, because slug generation needs it
                 if (isNew) _contentManager.Create(page);
 
@@ -141,7 +149,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
             else
             {
-                page = FetchPage(file.Path);
+                page = FetchPage(fullRepoFilePath);
 
                 if (page == null) return;
 
@@ -149,13 +157,44 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
         }
 
-        private ContentItem FetchPage(string repoPath)
+        private ContentItem FetchPage(string fullRepoFilePath)
         {
             return _contentManager
                         .Query(WellKnownConstants.RepoPageContentType)
-                        .Where<MarkdownPagePartRecord>(record => record.RepoPath == repoPath)
+                        .Where<MarkdownPagePartRecord>(record => record.RepoPath == fullRepoFilePath)
                         .List()
-                        .FirstOrDefault();
+                        .SingleOrDefault();
+        }
+
+        private ContentItem FindParent(string repoBasePath, string fullRepoFilePath)
+        {
+            // Cutting off file name
+            var fullRepoFolderPath = fullRepoFilePath.Substring(0, fullRepoFilePath.LastIndexOf("/"));
+
+            // Jumping up one level if the file is an Index itself (it can have a parent too).
+            if (fullRepoFilePath.EndsWith("Index.md")) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
+
+            while (true)
+            {
+                if (fullRepoFolderPath.Replace("/", string.Empty) == repoBasePath.Replace("/", string.Empty)) return null; // This should terminate at least.
+
+                var parentPath = UriHelper.Combine(fullRepoFolderPath, "Index.md");
+                if (_parentPagesCache.ContainsKey(parentPath)) return _parentPagesCache[parentPath];
+
+                var parent = _contentManager
+                    .Query(WellKnownConstants.RepoPageContentType)
+                    .Where<MarkdownPagePartRecord>(record => record.RepoPath == parentPath)
+                    .List()
+                    .SingleOrDefault();
+                if (parent != null)
+                {
+                    _parentPagesCache[parentPath] = parent;
+                    return parent;
+                }
+
+                // Jumping up one level
+                fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
+            }
         }
     }
 }

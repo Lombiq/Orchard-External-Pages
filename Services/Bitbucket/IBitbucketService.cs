@@ -11,5 +11,6 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         void Repopulate(int repositoryId);
         void CheckChangesets(int repositoryId);
         void ProcessNextPendingChangeset();
+        void Delete(int repositoryId);
     }
 }

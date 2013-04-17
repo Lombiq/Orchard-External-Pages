@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
@@ -17,6 +18,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IJobManager _jobManager;
         private readonly IFileProcessor _fileProcessor;
+        private readonly IContentManager _contentManager;
 
         public IRepository<BitbucketRepositoryDataRecord> RepositoryDataRepository { get { return _repository; } }
 
@@ -24,11 +26,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         public BitbucketService(
             IRepository<BitbucketRepositoryDataRecord> repository,
             IJobManager jobManager,
-            IFileProcessor fileProcessor)
+            IFileProcessor fileProcessor,
+            IContentManager contentManager)
         {
             _jobManager = jobManager;
             _repository = repository;
             _fileProcessor = fileProcessor;
+            _contentManager = contentManager;
         }
 
 
@@ -177,6 +181,22 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             repoData.LastProcessedNode = jobContext.Node;
             repoData.LastProcessedRevision = jobContext.Revision;
             _jobManager.Done(job);
+        }
+
+        public void Delete(int repositoryId)
+        {
+            var repoRecord = _repository.Get(repositoryId);
+            if (repoRecord != null) _repository.Delete(repoRecord);
+
+            var pages = _contentManager
+                .Query(WellKnownConstants.RepoPageContentType)
+                .Where<MarkdownPagePartRecord>(record => record.RepoPath.StartsWith(UriHelper.Combine("bitbucket.org", repoRecord.AccountName, repoRecord.Slug)))
+                .List();
+
+            foreach (var page in pages)
+            {
+                _contentManager.Remove(page);
+            }
         }
 
 

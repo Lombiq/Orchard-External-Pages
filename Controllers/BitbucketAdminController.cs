@@ -31,10 +31,7 @@ namespace OrchardHUN.ExternalPages.Controllers
         [HttpPost]
         public ActionResult DeleteRepository(int id, string returnUrl)
         {
-            var repoDataRepository = _bitbucketService.RepositoryDataRepository;
-
-            var record = repoDataRepository.Get(id);
-            if (record != null) repoDataRepository.Delete(record);
+            _bitbucketService.Delete(id);
 
             _notifier.Information(T("Repository deleted."));
 

@@ -22,6 +22,7 @@ namespace OrchardHUN.ExternalPages.Migrations
             ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
                 cfg => cfg
                     .WithPart("TitlePart")
+                    .WithPart("CommonPart")
                     .WithPart("AutoroutePart", builder => builder
                         .WithSetting("AutorouteSettings.AllowCustomPattern", "false")
                         .WithSetting("AutorouteSettings.AutomaticAdjustmentOnEdit", "true")
@@ -46,6 +47,7 @@ namespace OrchardHUN.ExternalPages.Migrations
 
             ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
                 cfg => cfg
+                    .WithPart("CommonPart")
                     .WithPart("BodyPart", builder => builder
                         .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
             );

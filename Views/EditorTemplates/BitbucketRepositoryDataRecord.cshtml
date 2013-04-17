@@ -1,9 +1,12 @@
 ﻿@model OrchardHUN.ExternalPages.Models.BitbucketRepositoryDataRecord
 @using OrchardHUN.ExternalPages.Models
 
+@{
+    var isExisting = Model.Id != 0;
+}
 <fieldset class="orchardhun-external-pages-bitbucket-repository-settings">
     <legend>
-        @if (!String.IsNullOrEmpty(Model.AccountName))
+        @if (isExisting)
         {
             @Model.AccountName<text>/</text>@Model.Slug
         }
@@ -14,10 +17,10 @@
     </legend>
     <div>
         @Html.HiddenFor(m => m.Id)
-        @if (Model.Id != 0)
+        @if (isExisting)
         {
             @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
-            <span class="hint">@T("Deleting the repository only prevents further updating but all the existing local data remains.")</span>
+            <span class="hint">@T("Deleting the repository will also remove content items.")</span>
             @Html.ActionLink(T("Repopulate").Text, "RepopulateRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "UnsafeUrl", @class = "button" })
             if (!Model.WasChecked())
             {
@@ -42,12 +45,27 @@
         <ol>
             <li>
                 @Html.LabelFor(m => m.AccountName, T("Account name"))
-                @Html.TextBoxFor(m => m.AccountName, new { @class = "text singleline" })
+                @if (isExisting)
+                {
+                    @Html.TextBoxFor(m => m.AccountName, new { @class = "text singleline", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.AccountName, new { @class = "text singleline" })
+                }
+                
                 @Html.ValidationMessageFor(m => m.AccountName)
             </li>
             <li>
                 @Html.LabelFor(m => m.Slug, T("Slug"))
-                @Html.TextBoxFor(m => m.Slug, new { @class = "text singleline" })
+                @if (isExisting)
+                {
+                    @Html.TextBoxFor(m => m.Slug, new { @class = "text singleline", @readonly = "readonly" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.Slug, new { @class = "text singleline" })
+                }
                 @Html.ValidationMessageFor(m => m.Slug)
             </li>
             <li>
