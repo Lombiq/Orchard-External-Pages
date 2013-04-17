@@ -112,12 +112,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 var lines = Regex.Split(src.Data, "\r\n|\r|\n").ToList();
                 int i = 1;
                 var titleFound = false;
+                var title = string.Empty;
                 while (!titleFound && i < lines.Count)
                 {
                     // If this line consists of just equals signs, the above line is a H1
                     if (Regex.IsMatch(lines[i], "^[=]+$"))
                     {
-                        page.As<TitlePart>().Title = lines[i - 1];
+                        title = lines[i - 1];
                         titleFound = true;
                         lines.RemoveAt(i - 1);
                         lines.RemoveAt(i);
@@ -125,13 +126,14 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     // Or if it starts with a single hashmark
                     else if (lines[i - 1].StartsWith("#"))
                     {
-                        page.As<TitlePart>().Title = lines[i - 1].Substring(1).Trim();
+                        title = lines[i - 1].Substring(1).Trim();
                         titleFound = true;
                         lines.RemoveAt(i - 1);
                     }
 
                     i++;
                 }
+                page.As<TitlePart>().Title = Regex.Replace(title, @"\\([\`*_{}[\]()#+-.!])", match => match.Groups[1].Value);
 
                 // Cleaning leading line breaks
                 while (lines.Count > 0 && string.IsNullOrEmpty(lines[0].Trim())) lines.RemoveAt(0);
