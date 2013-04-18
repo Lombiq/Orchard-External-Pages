@@ -45,16 +45,8 @@ namespace OrchardHUN.ExternalPages.Services
 
         public IStorageFile GetFile(string path)
         {
-            // if file exists...
-            try
-            {
-                return _storageProvider.GetFile(PathToStoragePath(path));
-            }
-            catch (Exception ex)
-            {
-                if (ex.IsFatal()) throw;
-                return null;
-            }
+            if (!_storageProvider.FileExists(PathToStoragePath(path))) return null;
+            return _storageProvider.GetFile(PathToStoragePath(path));
         }
 
         public void DeleteFile(string path)

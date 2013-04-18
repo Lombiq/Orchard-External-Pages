@@ -147,7 +147,6 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 if (isNew) _contentManager.Create(page);
 
                 _contentManager.Publish(page);
-                _contentManager.Flush();
             }
             else
             {
