@@ -13,7 +13,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class BitbucketChangesetUpdater : IScheduledTaskHandler, IOrchardShellEvents
     {
-        private const string TaskType = "OrchardHUN.ExternalPages.BitbucketChangesetUpdate";
+        private const string TaskType = "OrchardHUN.ExternalPages.BitbucketChangesetUpdater";
 
         private readonly IBitbucketService _bitbucketService;
         private readonly IResolve<ILockFile> _lockFileResolve;
