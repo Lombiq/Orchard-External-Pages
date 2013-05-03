@@ -1,5 +1,4 @@
-﻿using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
+﻿using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
 using OrchardHUN.ExternalPages.Models;
 

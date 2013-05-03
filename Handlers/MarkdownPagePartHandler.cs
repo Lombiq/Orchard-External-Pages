@@ -1,5 +1,4 @@
-﻿using MarkdownSharp;
-using Orchard.ContentManagement.Handlers;
+﻿using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using OrchardHUN.ExternalPages.Models;
 

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Text;
-using System.Web.Routing;
+﻿using System.Web.Routing;
 using Orchard.Alias;
-using Orchard.Exceptions;
 using Orchard.FileSystems.Media;
 
 namespace OrchardHUN.ExternalPages.Services

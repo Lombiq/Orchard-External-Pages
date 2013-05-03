@@ -1,5 +1,4 @@
 ﻿using Orchard.ContentManagement.Records;
-using Orchard.Data.Conventions;
 
 namespace OrchardHUN.ExternalPages.Models
 {
