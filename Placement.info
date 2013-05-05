@@ -1,3 +1,6 @@
 ﻿<Placement>
   <Place Parts_BitbucketSettings_SiteSettings="Content:5"/>
+  <Match ContentType="MarkdownRepoPage">
+    <Place Parts_Common_Metadata="-" />
+  </Match>
 </Placement>
