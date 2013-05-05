@@ -146,6 +146,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 // This is needed after the title is set, because slug generation needs it
                 if (isNew) _contentManager.Create(page);
 
+                // This is needed so published handlers can run
+                _contentManager.Unpublish(page);
                 _contentManager.Publish(page);
             }
             else
