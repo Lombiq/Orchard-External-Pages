@@ -108,7 +108,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     page.As<MarkdownPagePart>().RepoPath = fullRepoFilePath;
                 }
 
-                // Searching for the (first) title in the markdown text
+                // Searching for the (first) title in the markdown text. Doesn't work if the text is less than or equal to a single line.
                 var lines = Regex.Split(src.Data, "\r\n|\r|\n").ToList();
                 int i = 1;
                 var titleFound = false;
