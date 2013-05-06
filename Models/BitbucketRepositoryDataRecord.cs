@@ -53,7 +53,7 @@ namespace OrchardHUN.ExternalPages.Models
                         var mapping = new UrlMapping();
                         mapping.RepoPath = sides.First().Trim().Trim('/');
                         mapping.LocalPath = sides.Last().Trim().Trim('/');
-                        if (!mapping.RepoPath.IsMarkdownFilePath()) mapping.LocalPath += "/";
+                        if (!mapping.RepoPath.IsMarkdownFilePath() || mapping.RepoPath.IsIndexFilePath()) mapping.LocalPath += "/";
                         mappings.Add(mapping);
                     }
                 }

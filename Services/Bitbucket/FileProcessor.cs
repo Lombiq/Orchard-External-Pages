@@ -43,7 +43,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             // Ordering so files on the top of the folder hierarchy and index files are first. This way subsequent files will be able to find 
             // their parent.
-            foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.EndsWith("Index.md") ? 0 : 1))
+            foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.IsIndexFilePath() ? 0 : 1))
             {
                 Process(file, urlMappings, repoData, jobContext);
             }
@@ -84,6 +84,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
         {
             localPath = localPath.Replace("Index", "").Replace(".md", "");
+            if (file.Path.IsIndexFilePath()) localPath = UriHelper.Combine(localPath, "/"); // Trailing slash for index files directly fetched
             var repoBasePath = UriHelper.Combine("bitbucket.org", repoData.AccountName, repoData.Slug);
             var fullRepoFilePath = UriHelper.Combine(repoBasePath, file.Path);
 
@@ -175,7 +176,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             var fullRepoFolderPath = fullRepoFilePath.Substring(0, fullRepoFilePath.LastIndexOf("/"));
 
             // Jumping up one level if the file is an Index itself (it can have a parent too).
-            if (fullRepoFilePath.EndsWith("Index.md")) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
+            if (fullRepoFilePath.IsIndexFilePath()) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
 
             while (true)
             {

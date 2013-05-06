@@ -7,5 +7,10 @@ namespace OrchardHUN.ExternalPages
         {
             return path.EndsWith(".md");
         }
+
+        public static bool IsIndexFilePath(this string path)
+        {
+            return path.EndsWith("Index.md");
+        }
     }
 }
