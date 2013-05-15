@@ -1,0 +1,6 @@
+﻿.markdown-repo-page header:first-of-type h1 {
+  display: inline-block;
+}
+.markdown-repo-page header:first-of-type .orchardhun-externalpages-bitbucket-edit-link-container {
+  float: right;
+}

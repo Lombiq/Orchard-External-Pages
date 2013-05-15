@@ -1,6 +1,12 @@
 ﻿<Placement>
-  <Place Parts_BitbucketSettings_SiteSettings="Content:5"/>
+  <!-- Generic -->
   <Match ContentType="MarkdownRepoPage">
     <Place Parts_Common_Metadata="-" />
+  </Match>
+
+  <!-- Bitbucket -->
+  <Place Parts_BitbucketSettings_SiteSettings="Content:5"/>
+  <Match DisplayType="Detail">
+    <Place Parts_MarkdownPage_BitbucketEditLink="Header:after" />
   </Match>
 </Placement>

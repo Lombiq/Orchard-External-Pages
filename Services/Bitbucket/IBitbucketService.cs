@@ -6,6 +6,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     public interface IBitbucketService : IDependency
     {
+        // Not very nice exposing this, refactor when necessary
         IRepository<BitbucketRepositoryDataRecord> RepositoryDataRepository { get; }
 
         void Repopulate(int repositoryId);
