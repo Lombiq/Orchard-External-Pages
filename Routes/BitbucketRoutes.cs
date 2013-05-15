@@ -21,7 +21,6 @@ namespace OrchardHUN.ExternalPages.Routes
             {
                 new RouteDescriptor
                 {
-                    Name = "BitbucketAdminRoute",
                     Route = new Route(
                         "Admin/OrchardHUN.ExternalPages/Bitbucket/{action}",
                         new RouteValueDictionary
