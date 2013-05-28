@@ -1,7 +1,8 @@
 ﻿<Placement>
   <!-- Generic -->
   <Match ContentType="MarkdownRepoPage">
-    <Place Parts_Common_Metadata="-" />
+    <Place Parts_Common_Metadata="-"
+           Parts_Common_Metadata_Summary="-"/>
   </Match>
 
   <!-- Bitbucket -->
