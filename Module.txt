@@ -1,6 +1,6 @@
 ﻿Name: External Pages
 AntiForgery: enabled
-Author: The Orchard Hungary Team
+Author: The Orchard Hungary Team / Lombiq
 Website: http://orchardexternalpages.codeplex.com
 Version: 0.9
 OrchardVersion: 1.6
