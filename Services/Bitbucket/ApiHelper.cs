@@ -9,7 +9,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public static class ApiHelper
     {
-        public static TResponse GetResponse<TResponse>(BitbucketRepositoryDataRecord repositoryData, string path) where TResponse : new()
+        public static TResponse GetResponse<TResponse>(IBitbucketRepositoryData repositoryData, string path) where TResponse : new()
         {
             var restObjects = PrepareRest(repositoryData, path);
             var response = restObjects.Client.Execute<TResponse>(restObjects.Request);
@@ -17,7 +17,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return response.Data;
         }
 
-        public static byte[] GetResponse(BitbucketRepositoryDataRecord repositoryData, string path)
+        public static byte[] GetResponse(IBitbucketRepositoryData repositoryData, string path)
         {
             var restObjects = PrepareRest(repositoryData, path);
             var response = restObjects.Client.Execute(restObjects.Request);
@@ -25,7 +25,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return response.RawBytes;
         }
 
-        public static RestObjects PrepareRest(BitbucketRepositoryDataRecord repositoryData, string path)
+        public static RestObjects PrepareRest(IBitbucketRepositoryData repositoryData, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
             if (!String.IsNullOrEmpty(repositoryData.Username)) client.Authenticator = new HttpBasicAuthenticator(repositoryData.Username, repositoryData.Password);
@@ -33,7 +33,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return new RestObjects(client, request);
         }
 
-        public static void ThrowIfBadResponse(RestRequest request, IRestResponse response)
+        public static void ThrowIfBadResponse(IRestRequest request, IRestResponse response)
         {
             if (response.ResponseStatus == ResponseStatus.TimedOut)
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " timed out.", response.ErrorException);
@@ -60,5 +60,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 Request = request;
             }
         }
+    }
+
+    public interface IBitbucketRepositoryData
+    {
+        string AccountName { get; }
+        string Slug { get; }
+        string Username { get; }
+        string Password { get; }
     }
 }

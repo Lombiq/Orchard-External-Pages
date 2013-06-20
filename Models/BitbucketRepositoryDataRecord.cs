@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Orchard.Data.Conventions;
 using Orchard.Environment.Extensions;
+using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Models
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public class BitbucketRepositoryDataRecord
+    public class BitbucketRepositoryDataRecord : IBitbucketRepositoryData
     {
         public virtual int Id { get; set; }
         public virtual string AccountName { get; set; }
