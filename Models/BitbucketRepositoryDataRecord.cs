@@ -9,7 +9,7 @@ using OrchardHUN.ExternalPages.Services.Bitbucket;
 namespace OrchardHUN.ExternalPages.Models
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public class BitbucketRepositoryDataRecord : IBitbucketRepositoryData
+    public class BitbucketRepositoryDataRecord : IBitbucketRepositorySettings
     {
         public virtual int Id { get; set; }
         public virtual string AccountName { get; set; }

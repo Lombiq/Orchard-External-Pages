@@ -9,27 +9,27 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public static class ApiHelper
     {
-        public static TResponse GetResponse<TResponse>(IBitbucketRepositoryData repositoryData, string path) where TResponse : new()
+        public static TResponse GetResponse<TResponse>(IBitbucketRepositorySettings settings, string path) where TResponse : new()
         {
-            var restObjects = PrepareRest(repositoryData, path);
+            var restObjects = PrepareRest(settings, path);
             var response = restObjects.Client.Execute<TResponse>(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.Data;
         }
 
-        public static byte[] GetResponse(IBitbucketRepositoryData repositoryData, string path)
+        public static byte[] GetResponse(IBitbucketRepositorySettings settings, string path)
         {
-            var restObjects = PrepareRest(repositoryData, path);
+            var restObjects = PrepareRest(settings, path);
             var response = restObjects.Client.Execute(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.RawBytes;
         }
 
-        public static RestObjects PrepareRest(IBitbucketRepositoryData repositoryData, string path)
+        public static RestObjects PrepareRest(IBitbucketRepositorySettings settings, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
-            if (!String.IsNullOrEmpty(repositoryData.Username)) client.Authenticator = new HttpBasicAuthenticator(repositoryData.Username, repositoryData.Password);
-            var request = new RestRequest(UriHelper.Combine("repositories", repositoryData.AccountName, repositoryData.Slug, path));
+            if (!String.IsNullOrEmpty(settings.Username)) client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
+            var request = new RestRequest(UriHelper.Combine("repositories", settings.AccountName, settings.Slug, path));
             return new RestObjects(client, request);
         }
 
@@ -62,7 +62,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         }
     }
 
-    public interface IBitbucketRepositoryData
+    public interface IBitbucketRepositorySettings
     {
         string AccountName { get; }
         string Slug { get; }
