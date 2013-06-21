@@ -14,6 +14,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     public class BitbucketService : IBitbucketService
     {
         private const string Industry = "OrchardHUN.ExternalPages.Bitbucket.Changesets";
+
+        private readonly IBitbucketApiService _apiService;
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IJobManager _jobManager;
         private readonly IFileProcessor _fileProcessor;
@@ -23,11 +25,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
 
         public BitbucketService(
+            IBitbucketApiService apiService,
             IRepository<BitbucketRepositoryDataRecord> repository,
             IJobManager jobManager,
             IFileProcessor fileProcessor,
             IContentManager contentManager)
         {
+            _apiService = apiService;
             _jobManager = jobManager;
             _repository = repository;
             _fileProcessor = fileProcessor;
@@ -39,10 +43,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repoData = GetRepositoryDataOrThrow(repositoryId);
 
-            var changesetRestObjects = ApiHelper.PrepareRest(repoData, "changesets?limit=1");
-            var changesetResponse = changesetRestObjects.Client.Execute<ChangesetsResponse>(changesetRestObjects.Request);
-            ApiHelper.ThrowIfBadResponse(changesetRestObjects.Request, changesetResponse);
-            var lastChangeset = changesetResponse.Data.Changesets.FirstOrDefault();
+            var lastChangeset = _apiService.Fetch<ChangesetsResponse>(repoData, "changesets?limit=1").Changesets.FirstOrDefault();
 
             if (lastChangeset == null) return;
 
@@ -50,7 +51,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = ApiHelper.GetResponse<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
+                    var responseData = _apiService.Fetch<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
 
                     if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 
@@ -76,7 +77,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     foreach (var file in files)
                     {
                         jobFiles.Add(new UpdateJobFile(file.Path, UpdateJobfileType.AddedOrModified));
-                    } 
+                    }
                 }
                 else
                 {
@@ -105,7 +106,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (String.IsNullOrEmpty(repoData.LastCheckedNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
 
-            var changesets = ApiHelper.GetResponse<ChangesetsResponse>(repoData, "changesets?limit=50").Changesets;
+            var changesets = _apiService.Fetch<ChangesetsResponse>(repoData, "changesets?limit=50").Changesets;
 
             var lastChangeset = changesets.Where(changeset => changeset.Node == repoData.LastCheckedNode).SingleOrDefault();
             if (lastChangeset != null)

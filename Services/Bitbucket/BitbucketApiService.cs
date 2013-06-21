@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using Orchard.Environment.Extensions;
-using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Libraries.Utilities;
 using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public static class ApiHelper
+    public class BitbucketApiService : IBitbucketApiService
     {
-        public static TResponse GetResponse<TResponse>(IBitbucketRepositorySettings settings, string path) where TResponse : new()
+        public TResponse Fetch<TResponse>(IBitbucketRepositorySettings settings, string path) where TResponse : new()
         {
             var restObjects = PrepareRest(settings, path);
             var response = restObjects.Client.Execute<TResponse>(restObjects.Request);
@@ -17,7 +19,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return response.Data;
         }
 
-        public static byte[] GetResponse(IBitbucketRepositorySettings settings, string path)
+        public byte[] Fetch(IBitbucketRepositorySettings settings, string path)
         {
             var restObjects = PrepareRest(settings, path);
             var response = restObjects.Client.Execute(restObjects.Request);
@@ -25,7 +27,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return response.RawBytes;
         }
 
-        public static RestObjects PrepareRest(IBitbucketRepositorySettings settings, string path)
+
+        private RestObjects PrepareRest(IBitbucketRepositorySettings settings, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
             if (!String.IsNullOrEmpty(settings.Username)) client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
@@ -33,7 +36,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return new RestObjects(client, request);
         }
 
-        public static void ThrowIfBadResponse(IRestRequest request, IRestResponse response)
+
+        private static void ThrowIfBadResponse(IRestRequest request, IRestResponse response)
         {
             if (response.ResponseStatus == ResponseStatus.TimedOut)
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " timed out.", response.ErrorException);

@@ -17,6 +17,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class FileProcessor : IFileProcessor
     {
+        private readonly IBitbucketApiService _apiService;
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IContentManager _contentManager;
         private readonly IRepositoryFileService _fileService;
@@ -24,10 +25,12 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
 
         public FileProcessor(
+            IBitbucketApiService apiService,
             IRepository<BitbucketRepositoryDataRecord> repository,
             IContentManager contentManager,
             IRepositoryFileService fileService)
         {
+            _apiService = apiService;
             _repository = repository;
             _contentManager = contentManager;
             _fileService = fileService;
@@ -70,10 +73,10 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var sizeProbe = ApiHelper.GetResponse<FolderSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
+                var sizeProbe = _apiService.Fetch<FolderSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
                 var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
                 if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, ApiHelper.GetResponse(repoData, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
+                _fileService.SaveFile(localPath, _apiService.Fetch(repoData, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
             }
             else
             {
@@ -92,7 +95,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var src = ApiHelper.GetResponse<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
+                var src = _apiService.Fetch<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
                 if (file.Type != UpdateJobfileType.Added) page = FetchPage(fullRepoFilePath);
 

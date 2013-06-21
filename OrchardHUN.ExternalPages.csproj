@@ -132,11 +132,12 @@
     <Compile Include="RestClientExtensions.cs" />
     <Compile Include="Routes\BitbucketRoutes.cs" />
     <Compile Include="Services\Bitbucket\ApiClasses.cs" />
-    <Compile Include="Services\Bitbucket\ApiHelper.cs" />
+    <Compile Include="Services\Bitbucket\BitbucketApiService.cs" />
     <Compile Include="Services\Bitbucket\BitbucketChangesetProcessorTask.cs" />
     <Compile Include="Services\Bitbucket\BitbucketService.cs" />
     <Compile Include="Services\Bitbucket\BitbucketChangesetUpdater.cs" />
     <Compile Include="Services\Bitbucket\FileProcessor.cs" />
+    <Compile Include="Services\Bitbucket\IBitbucketApiService.cs" />
     <Compile Include="Services\Bitbucket\IBitbucketService.cs" />
     <Compile Include="Services\Bitbucket\IFileProcessor.cs" />
     <Compile Include="Services\Bitbucket\JobClasses.cs" />
