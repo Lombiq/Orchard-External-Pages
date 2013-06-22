@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Orchard.Environment.Extensions;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket

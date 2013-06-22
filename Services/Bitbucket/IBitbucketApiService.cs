@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Orchard;
 using Orchard.Environment.Extensions;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {

@@ -10,7 +10,7 @@ using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {

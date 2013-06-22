@@ -5,7 +5,7 @@ using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
