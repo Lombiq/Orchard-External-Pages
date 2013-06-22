@@ -43,7 +43,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repoData = GetRepositoryDataOrThrow(repositoryId);
 
-            var lastChangeset = _apiService.Fetch<ChangesetsResponse>(repoData, "changesets?limit=1").Changesets.FirstOrDefault();
+            var lastChangeset = _apiService.FetchFromRepo<ChangesetsResponse>(repoData, "changesets?limit=1").Changesets.FirstOrDefault();
 
             if (lastChangeset == null) return;
 
@@ -51,7 +51,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = _apiService.Fetch<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
+                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
 
                     if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 
@@ -106,7 +106,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (String.IsNullOrEmpty(repoData.LastCheckedNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
 
-            var changesets = _apiService.Fetch<ChangesetsResponse>(repoData, "changesets?limit=50").Changesets;
+            var changesets = _apiService.FetchFromRepo<ChangesetsResponse>(repoData, "changesets?limit=50").Changesets;
 
             var lastChangeset = changesets.Where(changeset => changeset.Node == repoData.LastCheckedNode).SingleOrDefault();
             if (lastChangeset != null)

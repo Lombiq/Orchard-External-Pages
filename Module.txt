@@ -11,8 +11,12 @@ Features:
         Description: Deals with aggregating pages from external sources
 		Category: Content
 		Dependencies: Markdown, Orchard.Alias, Orchard.Autoroute, Title
+    OrchardHUN.ExternalPages.Bitbucket.Services:
+		Name: External Pages: Bitbucket Services
+        Description: Provides services to help accessing Bitbucket, for developers.
+		Category: Developer
     OrchardHUN.ExternalPages.Bitbucket:
 		Name: External Pages: Bitbucket
         Description: Aggregates pages from a Bitbucket repository
 		Category: Content
-		Dependencies: OrchardHUN.ExternalPages, Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Piedone.HelpfulLibraries.Utilities
+		Dependencies: OrchardHUN.ExternalPages, OrchardHUN.ExternalPages.Bitbucket.Services, Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Piedone.HelpfulLibraries.Utilities

@@ -8,32 +8,31 @@ using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
-    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket.Services")]
     public class BitbucketApiService : IBitbucketApiService
     {
-        public TResponse Fetch<TResponse>(IBitbucketRepositorySettings settings, string path) where TResponse : new()
+        public TResponse Fetch<TResponse>(IBitbucketAuthConfig authConfig, string path) where TResponse : new()
         {
-            var restObjects = PrepareRest(settings, path);
+            var restObjects = PrepareRest(authConfig, path);
             var response = restObjects.Client.Execute<TResponse>(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.Data;
         }
 
-        public byte[] Fetch(IBitbucketRepositorySettings settings, string path)
+        public byte[] Fetch(IBitbucketAuthConfig authConfig, string path)
         {
-            var restObjects = PrepareRest(settings, path);
+            var restObjects = PrepareRest(authConfig, path);
             var response = restObjects.Client.Execute(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.RawBytes;
         }
 
 
-        private RestObjects PrepareRest(IBitbucketRepositorySettings settings, string path)
+        private RestObjects PrepareRest(IBitbucketAuthConfig authConfig, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
-            if (!String.IsNullOrEmpty(settings.Username)) client.Authenticator = new HttpBasicAuthenticator(settings.Username, settings.Password);
-            var request = new RestRequest(UriHelper.Combine("repositories", settings.AccountName, settings.Slug, path));
-            return new RestObjects(client, request);
+            if (!String.IsNullOrEmpty(authConfig.Username)) client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
+            return new RestObjects(client, new RestRequest(path));
         }
 
 
@@ -64,13 +63,5 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 Request = request;
             }
         }
-    }
-
-    public interface IBitbucketRepositorySettings
-    {
-        string AccountName { get; }
-        string Slug { get; }
-        string Username { get; }
-        string Password { get; }
     }
 }
