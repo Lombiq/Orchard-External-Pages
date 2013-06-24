@@ -51,7 +51,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path));
+                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path, "/"));
 
                     if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 

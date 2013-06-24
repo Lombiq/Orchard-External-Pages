@@ -178,6 +178,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             // Cutting off file name
             var fullRepoFolderPath = fullRepoFilePath.Substring(0, fullRepoFilePath.LastIndexOf("/"));
 
+            if (fullRepoFolderPath == repoBasePath) return null; // We've reached the root.
+
             // Jumping up one level if the file is an Index itself (it can have a parent too).
             if (fullRepoFilePath.IsIndexFilePath()) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
 
