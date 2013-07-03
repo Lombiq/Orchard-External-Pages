@@ -13,7 +13,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .ContentPartRecord()
                     .Column<string>("RepoPath", column => column.Unique())
                 )
-                .AlterTable(typeof(MarkdownPagePartRecord).Name,
+            .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
                     .CreateIndex("RepoPath", new string[] { "RepoPath" })
                 );
@@ -30,7 +30,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .WithPart(typeof(MarkdownPagePart).Name)
                     .WithPart("BodyPart", builder => builder
                         .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
-            );
+                );
 
 
             return 2;
@@ -41,15 +41,15 @@ namespace OrchardHUN.ExternalPages.Migrations
         {
             SchemaBuilder.AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
-                .DropColumn("Text")
-            );
+                    .DropColumn("Text")
+                );
 
             ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
                 cfg => cfg
                     .WithPart("CommonPart")
                     .WithPart("BodyPart", builder => builder
                         .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
-            );
+                );
 
 
             return 2;

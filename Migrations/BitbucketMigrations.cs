@@ -23,13 +23,13 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<int>("LastCheckedRevision")
                     .Column<string>("LastProcessedNode")
                     .Column<int>("LastProcessedRevision")
-            );
+                );
 
             SchemaBuilder.CreateTable(typeof(BitbucketSettingsPartRecord).Name,
                 table => table
                     .ContentPartRecord()
                     .Column<int>("MinutesBetweenPulls")
-            );
+                );
 
 
             return 3;
@@ -41,7 +41,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 table => table
                     .ContentPartRecord()
                     .Column<int>("MinutesBetweenPulls")
-            );
+                );
 
 
             return 2;
@@ -52,7 +52,7 @@ namespace OrchardHUN.ExternalPages.Migrations
             SchemaBuilder.AlterTable(typeof(BitbucketRepositoryDataRecord).Name,
                 table => table
                     .AlterColumn("UrlMappingsDefinition", column => column.WithType(System.Data.DbType.String).Unlimited())
-            );
+                );
 
 
             return 3;
