@@ -7,6 +7,7 @@ using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Utilities;
 using Piedone.HelpfulLibraries.Tasks.Jobs;
+using Orchard.Security;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -20,6 +21,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private readonly IJobManager _jobManager;
         private readonly IFileProcessor _fileProcessor;
         private readonly IContentManager _contentManager;
+        private readonly IEncryptionService _encryptionService;
 
         public IRepository<BitbucketRepositoryDataRecord> RepositoryDataRepository { get { return _repository; } }
 
@@ -29,21 +31,24 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             IRepository<BitbucketRepositoryDataRecord> repository,
             IJobManager jobManager,
             IFileProcessor fileProcessor,
-            IContentManager contentManager)
+            IContentManager contentManager,
+            IEncryptionService encryptionService)
         {
             _apiService = apiService;
             _jobManager = jobManager;
             _repository = repository;
             _fileProcessor = fileProcessor;
             _contentManager = contentManager;
+            _encryptionService = encryptionService;
         }
 
 
         public void Repopulate(int repositoryId)
         {
             var repoData = GetRepositoryDataOrThrow(repositoryId);
+            var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
-            var lastChangeset = _apiService.FetchFromRepo<ChangesetsResponse>(repoData, "changesets?limit=1").Changesets.FirstOrDefault();
+            var lastChangeset = _apiService.FetchFromRepo<ChangesetsResponse>(repoSettings, "changesets?limit=1").Changesets.FirstOrDefault();
 
             if (lastChangeset == null) return;
 
@@ -51,7 +56,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoData, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path, "/"));
+                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path, "/"));
 
                     if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 
@@ -106,7 +111,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (String.IsNullOrEmpty(repoData.LastCheckedNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
 
-            var changesets = _apiService.FetchFromRepo<ChangesetsResponse>(repoData, "changesets?limit=50").Changesets;
+            var changesets = _apiService.FetchFromRepo<ChangesetsResponse>(new BitbucketRepositorySettings(repoData, _encryptionService), "changesets?limit=50").Changesets;
 
             var lastChangeset = changesets.Where(changeset => changeset.Node == repoData.LastCheckedNode).SingleOrDefault();
             if (lastChangeset != null)
@@ -204,7 +209,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repository = _repository.Get(id);
             if (repository == null) throw new ArgumentException("No repository exists with the following id: " + id);
-            return repository;
+            return  repository;
         }
     }
 }

@@ -124,6 +124,7 @@
     <Compile Include="Migrations\BaseMigrations.cs" />
     <Compile Include="Migrations\BitbucketMigrations.cs" />
     <Compile Include="Models\BitbucketRepositoryDataRecord.cs" />
+    <Compile Include="Models\BitbucketRepositorySettings.cs" />
     <Compile Include="Models\BitbucketSettingsPart.cs" />
     <Compile Include="Models\BitbucketSettingsPartRecord.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />

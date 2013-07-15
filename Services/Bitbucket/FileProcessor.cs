@@ -9,6 +9,7 @@ using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Security;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Utilities;
 
@@ -21,6 +22,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IContentManager _contentManager;
         private readonly IRepositoryFileService _fileService;
+        private readonly IEncryptionService _encryptionService;
         private readonly Dictionary<string, ContentItem> _parentPagesCache = new Dictionary<string, ContentItem>();
 
 
@@ -28,12 +30,14 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             IBitbucketApiService apiService,
             IRepository<BitbucketRepositoryDataRecord> repository,
             IContentManager contentManager,
-            IRepositoryFileService fileService)
+            IRepositoryFileService fileService,
+            IEncryptionService encryptionService)
         {
             _apiService = apiService;
             _repository = repository;
             _contentManager = contentManager;
             _fileService = fileService;
+            _encryptionService = encryptionService;
         }
 
 
@@ -41,6 +45,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repoData = _repository.Get(jobContext.RepositoryId);
             if (repoData == null) return;
+            var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
             var urlMappings = repoData.UrlMappings();
 
@@ -48,12 +53,12 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             // their parent.
             foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.IsIndexFilePath() ? 0 : 1))
             {
-                Process(file, urlMappings, repoData, jobContext);
+                Process(file, urlMappings, repoData, repoSettings, jobContext);
             }
         }
 
 
-        private void Process(UpdateJobFile file, IEnumerable<UrlMapping> urlMappings, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void Process(UpdateJobFile file, IEnumerable<UrlMapping> urlMappings, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             var mapping = urlMappings.Where(urlMapping => file.Path.StartsWith(urlMapping.RepoPath)).FirstOrDefault();
             if (mapping == null) return;
@@ -62,21 +67,21 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath.Trim('/'));
             else localPath = UriHelper.Combine(mapping.LocalPath, localPath);
 
-            if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, jobContext);
-            else if (repoData.MirrorFiles) ProcessFile(file, localPath, repoData, jobContext);
+            if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, repoSettings, jobContext);
+            else if (repoData.MirrorFiles) ProcessFile(file, localPath, repoData, repoSettings, jobContext);
         }
 
 
-        private void ProcessFile(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void ProcessFile(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             if (String.IsNullOrEmpty(Path.GetExtension(localPath))) return;
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var sizeProbe = _apiService.FetchFromRepo<FolderSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
+                var sizeProbe = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
                 var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
                 if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, _apiService.FetchFromRepo(repoData, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
+                _fileService.SaveFile(localPath, _apiService.FetchFromRepo(repoSettings, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
             }
             else
             {
@@ -84,7 +89,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
         }
 
-        private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             localPath = localPath.Replace("Index", "").Replace(".md", "");
             if (file.Path.IsIndexFilePath()) localPath = UriHelper.Combine(localPath, "/"); // Trailing slash for index files directly fetched
@@ -95,7 +100,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var src = _apiService.FetchFromRepo<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
+                var src = _apiService.FetchFromRepo<FileSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
                 if (file.Type != UpdateJobfileType.Added) page = FetchPage(fullRepoFilePath);
 
