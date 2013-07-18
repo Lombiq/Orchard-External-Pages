@@ -6,7 +6,7 @@ namespace OrchardHUN.ExternalPages.Services
 {
     public class RepositoryFileService : IRepositoryFileService
     {
-        private const string RootFolder = "ExternalPages/";
+        private const string RootFolder = "_OrchardHUNModules/ExternalPages/";
 
         private readonly IStorageProvider _storageProvider;
         private readonly IAliasService _aliasService;

@@ -1,11 +1,21 @@
 ﻿using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
+using Orchard.FileSystems.Media;
 using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Migrations
 {
     public class BaseMigrations : DataMigrationImpl
     {
+        private readonly IStorageProvider _storageProvider;
+
+
+        public BaseMigrations(IStorageProvider storageProvider)
+        {
+            _storageProvider = storageProvider;
+        }
+	
+			
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
@@ -33,7 +43,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 );
 
 
-            return 2;
+            return 3;
         }
 
 
@@ -53,6 +63,20 @@ namespace OrchardHUN.ExternalPages.Migrations
 
 
             return 2;
+        }
+
+        public int UpdateFrom2()
+        {
+            if (!_storageProvider.FolderExists("ExternalPages")) return 3;
+
+            if (!_storageProvider.FolderExists("_OrchardHUNModules"))
+            {
+                _storageProvider.CreateFolder("_OrchardHUNModules");
+            }
+            _storageProvider.RenameFolder("ExternalPages", "_OrchardHUNModules/ExternalPages");
+
+
+            return 3;
         }
     }
 }

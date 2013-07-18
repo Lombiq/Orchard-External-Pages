@@ -77,6 +77,7 @@ namespace OrchardHUN.ExternalPages.Models
 
         public static string SetPasswordEncrypted(this BitbucketRepositoryDataRecord settings, IEncryptionService encryptionService, string plainPassword)
         {
+            if (plainPassword == null) plainPassword = string.Empty;
             settings.Password = Convert.ToBase64String(encryptionService.Encode(Encoding.UTF8.GetBytes(plainPassword)));
             return settings.Password;
         }
