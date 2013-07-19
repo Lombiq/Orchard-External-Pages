@@ -1,12 +1,21 @@
-﻿using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
+﻿using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
+using Orchard.FileSystems.Media;
 using OrchardHUN.ExternalPages.Models;
 
 namespace OrchardHUN.ExternalPages.Migrations
 {
     public class BaseMigrations : DataMigrationImpl
     {
+        private readonly IStorageProvider _storageProvider;
+
+
+        public BaseMigrations(IStorageProvider storageProvider)
+        {
+            _storageProvider = storageProvider;
+        }
+	
+			
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
@@ -14,7 +23,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .ContentPartRecord()
                     .Column<string>("RepoPath", column => column.Unique())
                 )
-                .AlterTable(typeof(MarkdownPagePartRecord).Name,
+            .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
                     .CreateIndex("RepoPath", new string[] { "RepoPath" })
                 );
@@ -31,10 +40,10 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .WithPart(typeof(MarkdownPagePart).Name)
                     .WithPart("BodyPart", builder => builder
                         .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
-            );
+                );
 
 
-            return 2;
+            return 3;
         }
 
 
@@ -42,18 +51,32 @@ namespace OrchardHUN.ExternalPages.Migrations
         {
             SchemaBuilder.AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
-                .DropColumn("Text")
-            );
+                    .DropColumn("Text")
+                );
 
             ContentDefinitionManager.AlterTypeDefinition(WellKnownConstants.RepoPageContentType,
                 cfg => cfg
                     .WithPart("CommonPart")
                     .WithPart("BodyPart", builder => builder
                         .WithSetting("BodyTypePartSettings.Flavor", "markdown"))
-            );
+                );
 
 
             return 2;
+        }
+
+        public int UpdateFrom2()
+        {
+            if (!_storageProvider.FolderExists("ExternalPages")) return 3;
+
+            if (!_storageProvider.FolderExists("_OrchardHUNModules"))
+            {
+                _storageProvider.CreateFolder("_OrchardHUNModules");
+            }
+            _storageProvider.RenameFolder("ExternalPages", "_OrchardHUNModules/ExternalPages");
+
+
+            return 3;
         }
     }
 }

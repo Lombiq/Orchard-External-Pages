@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Orchard.Environment.Extensions;
@@ -24,7 +21,6 @@ namespace OrchardHUN.ExternalPages.Routes
             {
                 new RouteDescriptor
                 {
-                    Name = "BitbucketAdminRoute",
                     Route = new Route(
                         "Admin/OrchardHUN.ExternalPages/Bitbucket/{action}",
                         new RouteValueDictionary

@@ -15,7 +15,7 @@ namespace OrchardHUN.ExternalPages.Models
         }
 
         private readonly LazyField<IList<BitbucketRepositoryDataRecord>> _repositories = new LazyField<IList<BitbucketRepositoryDataRecord>>();
-        public LazyField<IList<BitbucketRepositoryDataRecord>> RepositoriesField { get { return _repositories; } }
+        internal LazyField<IList<BitbucketRepositoryDataRecord>> RepositoriesField { get { return _repositories; } }
         public IList<BitbucketRepositoryDataRecord> Repositories
         {
             get { return _repositories.Value; }

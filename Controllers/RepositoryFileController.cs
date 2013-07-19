@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 using OrchardHUN.ExternalPages.Services;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Controllers
 {

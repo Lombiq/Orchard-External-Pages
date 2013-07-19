@@ -1,15 +1,12 @@
-﻿using System;
-using System.Text;
-using System.Web.Routing;
+﻿using System.Web.Routing;
 using Orchard.Alias;
-using Orchard.Exceptions;
 using Orchard.FileSystems.Media;
 
 namespace OrchardHUN.ExternalPages.Services
 {
     public class RepositoryFileService : IRepositoryFileService
     {
-        private const string RootFolder = "ExternalPages/";
+        private const string RootFolder = "_OrchardHUNModules/ExternalPages/";
 
         private readonly IStorageProvider _storageProvider;
         private readonly IAliasService _aliasService;
@@ -45,16 +42,8 @@ namespace OrchardHUN.ExternalPages.Services
 
         public IStorageFile GetFile(string path)
         {
-            // if file exists...
-            try
-            {
-                return _storageProvider.GetFile(PathToStoragePath(path));
-            }
-            catch (Exception ex)
-            {
-                if (ex.IsFatal()) throw;
-                return null;
-            }
+            if (!_storageProvider.FileExists(PathToStoragePath(path))) return null;
+            return _storageProvider.GetFile(PathToStoragePath(path));
         }
 
         public void DeleteFile(string path)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
+﻿
 namespace OrchardHUN.ExternalPages
 {
     public static class StringExtensions
@@ -10,6 +6,11 @@ namespace OrchardHUN.ExternalPages
         public static bool IsMarkdownFilePath(this string path)
         {
             return path.EndsWith(".md");
+        }
+
+        public static bool IsIndexFilePath(this string path)
+        {
+            return path.EndsWith("Index.md");
         }
     }
 }

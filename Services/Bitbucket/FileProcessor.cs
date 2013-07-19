@@ -9,28 +9,35 @@ using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Security;
 using OrchardHUN.ExternalPages.Models;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
     public class FileProcessor : IFileProcessor
     {
+        private readonly IBitbucketApiService _apiService;
         private readonly IRepository<BitbucketRepositoryDataRecord> _repository;
         private readonly IContentManager _contentManager;
         private readonly IRepositoryFileService _fileService;
+        private readonly IEncryptionService _encryptionService;
         private readonly Dictionary<string, ContentItem> _parentPagesCache = new Dictionary<string, ContentItem>();
 
 
         public FileProcessor(
+            IBitbucketApiService apiService,
             IRepository<BitbucketRepositoryDataRecord> repository,
             IContentManager contentManager,
-            IRepositoryFileService fileService)
+            IRepositoryFileService fileService,
+            IEncryptionService encryptionService)
         {
+            _apiService = apiService;
             _repository = repository;
             _contentManager = contentManager;
             _fileService = fileService;
+            _encryptionService = encryptionService;
         }
 
 
@@ -38,19 +45,20 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repoData = _repository.Get(jobContext.RepositoryId);
             if (repoData == null) return;
+            var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
             var urlMappings = repoData.UrlMappings();
 
             // Ordering so files on the top of the folder hierarchy and index files are first. This way subsequent files will be able to find 
             // their parent.
-            foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.EndsWith("Index.md") ? 0 : 1))
+            foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.IsIndexFilePath() ? 0 : 1))
             {
-                Process(file, urlMappings, repoData, jobContext);
+                Process(file, urlMappings, repoData, repoSettings, jobContext);
             }
         }
 
 
-        private void Process(UpdateJobFile file, IEnumerable<UrlMapping> urlMappings, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void Process(UpdateJobFile file, IEnumerable<UrlMapping> urlMappings, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             var mapping = urlMappings.Where(urlMapping => file.Path.StartsWith(urlMapping.RepoPath)).FirstOrDefault();
             if (mapping == null) return;
@@ -59,21 +67,21 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath.Trim('/'));
             else localPath = UriHelper.Combine(mapping.LocalPath, localPath);
 
-            if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, jobContext);
-            else if (repoData.MirrorFiles) ProcessFile(file, localPath, repoData, jobContext);
+            if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, repoSettings, jobContext);
+            else if (repoData.MirrorFiles) ProcessFile(file, localPath, repoData, repoSettings, jobContext);
         }
 
 
-        private void ProcessFile(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void ProcessFile(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             if (String.IsNullOrEmpty(Path.GetExtension(localPath))) return;
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var sizeProbe = ApiHelper.GetResponse<FolderSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
+                var sizeProbe = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
                 var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
                 if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, ApiHelper.GetResponse(repoData, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
+                _fileService.SaveFile(localPath, _apiService.FetchFromRepo(repoSettings, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
             }
             else
             {
@@ -81,9 +89,10 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
         }
 
-        private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, UpdateJobContext jobContext)
+        private void ProcessPage(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
             localPath = localPath.Replace("Index", "").Replace(".md", "");
+            if (file.Path.IsIndexFilePath()) localPath = UriHelper.Combine(localPath, "/"); // Trailing slash for index files directly fetched
             var repoBasePath = UriHelper.Combine("bitbucket.org", repoData.AccountName, repoData.Slug);
             var fullRepoFilePath = UriHelper.Combine(repoBasePath, file.Path);
 
@@ -91,7 +100,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var src = ApiHelper.GetResponse<FileSrcResponse>(repoData, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
+                var src = _apiService.FetchFromRepo<FileSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
                 if (file.Type != UpdateJobfileType.Added) page = FetchPage(fullRepoFilePath);
 
@@ -108,7 +117,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     page.As<MarkdownPagePart>().RepoPath = fullRepoFilePath;
                 }
 
-                // Searching for the (first) title in the markdown text
+                // Searching for the (first) title in the markdown text. Doesn't work if the text is less than or equal to a single line.
                 var lines = Regex.Split(src.Data, "\r\n|\r|\n").ToList();
                 int i = 1;
                 var titleFound = false;
@@ -146,8 +155,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 // This is needed after the title is set, because slug generation needs it
                 if (isNew) _contentManager.Create(page);
 
+                // This is needed so published handlers can run
+                _contentManager.Unpublish(page);
                 _contentManager.Publish(page);
-                _contentManager.Flush();
             }
             else
             {
@@ -173,8 +183,10 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             // Cutting off file name
             var fullRepoFolderPath = fullRepoFilePath.Substring(0, fullRepoFilePath.LastIndexOf("/"));
 
+            if (fullRepoFolderPath == repoBasePath) return null; // We've reached the root.
+
             // Jumping up one level if the file is an Index itself (it can have a parent too).
-            if (fullRepoFilePath.EndsWith("Index.md")) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
+            if (fullRepoFilePath.IsIndexFilePath()) fullRepoFolderPath = fullRepoFolderPath.Substring(0, fullRepoFolderPath.LastIndexOf("/"));
 
             while (true)
             {

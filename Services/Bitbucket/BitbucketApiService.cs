@@ -1,39 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using Orchard.Environment.Extensions;
-using OrchardHUN.ExternalPages.Models;
-using Piedone.HelpfulLibraries.Libraries.Utilities;
+using Piedone.HelpfulLibraries.Utilities;
 using RestSharp;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
-    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket")]
-    public static class ApiHelper
+    [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket.Services")]
+    public class BitbucketApiService : IBitbucketApiService
     {
-        public static TResponse GetResponse<TResponse>(BitbucketRepositoryDataRecord repositoryData, string path) where TResponse : new()
+        public TResponse Fetch<TResponse>(IBitbucketAuthConfig authConfig, string path) where TResponse : new()
         {
-            var restObjects = PrepareRest(repositoryData, path);
+            var restObjects = PrepareRest(authConfig, path);
             var response = restObjects.Client.Execute<TResponse>(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.Data;
         }
 
-        public static byte[] GetResponse(BitbucketRepositoryDataRecord repositoryData, string path)
+        public byte[] Fetch(IBitbucketAuthConfig authConfig, string path)
         {
-            var restObjects = PrepareRest(repositoryData, path);
+            var restObjects = PrepareRest(authConfig, path);
             var response = restObjects.Client.Execute(restObjects.Request);
             ThrowIfBadResponse(restObjects.Request, response);
             return response.RawBytes;
         }
 
-        public static RestObjects PrepareRest(BitbucketRepositoryDataRecord repositoryData, string path)
+
+        private RestObjects PrepareRest(IBitbucketAuthConfig authConfig, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
-            if (!String.IsNullOrEmpty(repositoryData.Username)) client.Authenticator = new HttpBasicAuthenticator(repositoryData.Username, repositoryData.Password);
-            var request = new RestRequest(UriHelper.Combine("repositories", repositoryData.AccountName, repositoryData.Slug, path));
-            return new RestObjects(client, request);
+            if (!String.IsNullOrEmpty(authConfig.Username)) client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
+            return new RestObjects(client, new RestRequest(path));
         }
 
-        public static void ThrowIfBadResponse(RestRequest request, IRestResponse response)
+
+        private static void ThrowIfBadResponse(IRestRequest request, IRestResponse response)
         {
             if (response.ResponseStatus == ResponseStatus.TimedOut)
                 throw new ApplicationException("The Bitbucket API request to " + request.Resource + " timed out.", response.ErrorException);

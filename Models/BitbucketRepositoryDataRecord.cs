@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Orchard.Data.Conventions;
 using Orchard.Environment.Extensions;
+using Orchard.Security;
+using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Models
 {
@@ -14,18 +18,17 @@ namespace OrchardHUN.ExternalPages.Models
         public virtual string AccountName { get; set; }
         public virtual string Slug { get; set; }
         public virtual string Username { get; set; }
+        [DataType(DataType.Password)]
         public virtual string Password { get; set; }
         public virtual bool MirrorFiles { get; set; }
         public virtual int MaximalFileSizeKB { get; set; }
-        
-
         [StringLengthMax]
         public virtual string UrlMappingsDefinition { get; set; }
-
         public virtual string LastCheckedNode { get; set; }
         public virtual int LastCheckedRevision { get; set; }
         public virtual string LastProcessedNode { get; set; }
         public virtual int LastProcessedRevision { get; set; }
+
 
         public BitbucketRepositoryDataRecord()
         {
@@ -53,7 +56,7 @@ namespace OrchardHUN.ExternalPages.Models
                         var mapping = new UrlMapping();
                         mapping.RepoPath = sides.First().Trim().Trim('/');
                         mapping.LocalPath = sides.Last().Trim().Trim('/');
-                        if (!mapping.RepoPath.IsMarkdownFilePath()) mapping.LocalPath += "/";
+                        if (!mapping.RepoPath.IsMarkdownFilePath() || mapping.RepoPath.IsIndexFilePath()) mapping.LocalPath += "/";
                         mappings.Add(mapping);
                     }
                 }
@@ -70,6 +73,18 @@ namespace OrchardHUN.ExternalPages.Models
         public static bool WasProcessed(this BitbucketRepositoryDataRecord settings)
         {
             return !String.IsNullOrEmpty(settings.LastProcessedNode);
+        }
+
+        public static string SetPasswordEncrypted(this BitbucketRepositoryDataRecord settings, IEncryptionService encryptionService, string plainPassword)
+        {
+            if (plainPassword == null) plainPassword = string.Empty;
+            settings.Password = Convert.ToBase64String(encryptionService.Encode(Encoding.UTF8.GetBytes(plainPassword)));
+            return settings.Password;
+        }
+
+        public static string GetDecodedPassword(this BitbucketRepositoryDataRecord settings, IEncryptionService encryptionService)
+        {
+            return Encoding.UTF8.GetString(encryptionService.Decode(Convert.FromBase64String(settings.Password)));
         }
     }
 
