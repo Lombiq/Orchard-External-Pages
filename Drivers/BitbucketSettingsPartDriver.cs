@@ -3,6 +3,7 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Security;
 using Orchard.UI.Notify;
 using OrchardHUN.ExternalPages.Models;
 using OrchardHUN.ExternalPages.Services.Bitbucket;
@@ -14,6 +15,7 @@ namespace OrchardHUN.ExternalPages.Drivers
     {
         private readonly IBitbucketService _bitbucketService;
         private readonly INotifier _notifier;
+        private readonly IEncryptionService _encryptionService;
 
         protected override string Prefix
         {
@@ -25,10 +27,12 @@ namespace OrchardHUN.ExternalPages.Drivers
 
         public BitbucketSettingsPartDriver(
             IBitbucketService bitbucketService,
-            INotifier notifier)
+            INotifier notifier,
+            IEncryptionService encryptionService)
         {
             _bitbucketService = bitbucketService;
             _notifier = notifier;
+            _encryptionService = encryptionService;
 
             T = NullLocalizer.Instance;
         }
@@ -62,12 +66,11 @@ namespace OrchardHUN.ExternalPages.Drivers
                         if (!String.IsNullOrEmpty(repository.Password) || String.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
                         savedRepository.MirrorFiles = repository.MirrorFiles;
                         savedRepository.MaximalFileSizeKB = repository.MaximalFileSizeKB;
+                        savedRepository.SetPasswordEncrypted(_encryptionService, repository.Password);
 
                         if (savedRepository.UrlMappingsDefinition != repository.UrlMappingsDefinition)
                         {
                             savedRepository.UrlMappingsDefinition = repository.UrlMappingsDefinition;
-
-
                         }
                     }
                 }
@@ -75,6 +78,7 @@ namespace OrchardHUN.ExternalPages.Drivers
 
             if (part.NewRepository != null && !String.IsNullOrEmpty(part.NewRepository.AccountName))
             {
+                part.NewRepository.SetPasswordEncrypted(_encryptionService, part.NewRepository.Password);
                 _bitbucketService.RepositoryDataRepository.Create(part.NewRepository);
                 _notifier.Information(T("The new repository entry was created. Before it wil be updated you should populate it first."));
             }
