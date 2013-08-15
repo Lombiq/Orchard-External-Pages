@@ -7,6 +7,11 @@ using Orchard.Tasks.Scheduling;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.DependencyInjection;
 using Piedone.HelpfulLibraries.Tasks;
+using System;
+using Orchard.Environment.Extensions;
+using Orchard.Logging;
+using Orchard.Tasks;
+using Orchard.Exceptions;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -21,6 +26,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private readonly IClock _clock;
         private readonly ISiteService _siteService;
 
+        public ILogger Logger { get; set; }
+
 
         public BitbucketChangesetUpdater(
             IBitbucketService bitbucketService,
@@ -34,6 +41,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             _scheduledTaskManager = scheduledTaskManager;
             _clock = clock;
             _siteService = siteService;
+
+            Logger = NullLogger.Instance;
         }
 
 
@@ -49,7 +58,16 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
                 foreach (var repository in _bitbucketService.RepositoryDataRepository.Table)
                 {
-                    if (repository.WasChecked()) _bitbucketService.CheckChangesets(repository.Id);
+                    try
+                    {
+                        if (repository.WasChecked()) _bitbucketService.CheckChangesets(repository.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.IsFatal()) throw;
+
+                        Logger.Error(ex, "Exception when processing checking changesets on Bitbucket for the repository " + repository.AccountName + "/" + repository.Slug);
+                    }
                 }
             }
         }
