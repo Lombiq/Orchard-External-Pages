@@ -16,6 +16,7 @@
             @Html.EditorFor(m => m.NewRepository)
         </li>
     </ol>
+    <span class="hint">@T("WARNING: if some repositories need password then you should provide the passwords each time you save this page!")</span>
     <span class="hint">@T("Repositories with no username and password defined will only work if they're public.")</span>
     <span class="hint">@T("If the account or slug of a repository changes delete the repository entry and create a new one with the new configuration.")</span>
     <fieldset>
