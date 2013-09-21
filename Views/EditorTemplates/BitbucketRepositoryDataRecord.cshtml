@@ -86,7 +86,7 @@
             </li>
             <li>
                 @Html.LabelFor(m => m.MaximalFileSizeKB, T("Maximal file size (in KB)"))
-                @Html.TextBoxFor(m => m.MaximalFileSizeKB, new { @class = "text-small" })
+                @Html.TextBoxFor(m => m.MaximalFileSizeKB, new { @class = "small" })
                 @Html.ValidationMessageFor(m => m.MaximalFileSizeKB)
                 <span class="hint">@T("Define a maximal file size for non-markdown files. If a file to be mirrored locally is too large the background task downloading it can time out.")</span>
             </li>
