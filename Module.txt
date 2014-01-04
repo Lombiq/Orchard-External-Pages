@@ -15,6 +15,7 @@ Features:
 		Name: External Pages: Bitbucket Services
         Description: Provides services to help accessing Bitbucket, for developers.
 		Category: Developer
+		Dependencies: Lombiq.RestSharp
     OrchardHUN.ExternalPages.Bitbucket:
 		Name: External Pages: Bitbucket
         Description: Aggregates pages from a Bitbucket repository
