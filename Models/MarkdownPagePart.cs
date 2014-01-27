@@ -6,8 +6,8 @@ namespace OrchardHUN.ExternalPages.Models
     {
         public string RepoPath
         {
-            get { return Record.RepoPath; }
-            set { Record.RepoPath = value; }
+            get { return Retrieve(x => x.RepoPath); }
+            set { Store(x => x.RepoPath, value); }
         }
     }
 }

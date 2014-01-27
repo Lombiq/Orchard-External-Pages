@@ -15,11 +15,8 @@ namespace OrchardHUN.ExternalPages.Handlers
         public Localizer T { get; set; }
 
 
-        public BitbucketSettingsPartHandler(
-            IRepository<BitbucketSettingsPartRecord> repository,
-            Work<IRepository<BitbucketRepositoryDataRecord>> bbRepositoryWork)
+        public BitbucketSettingsPartHandler(Work<IRepository<BitbucketRepositoryDataRecord>> bbRepositoryWork)
         {
-            Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<BitbucketSettingsPart>("Site"));
 
             OnActivated<BitbucketSettingsPart>((context, part) =>

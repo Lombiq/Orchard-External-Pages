@@ -123,7 +123,6 @@
     <Compile Include="Controllers\RepositoryFileController.cs" />
     <Compile Include="Drivers\BitbucketMarkdownPagePartDriver.cs" />
     <Compile Include="Drivers\BitbucketSettingsPartDriver.cs" />
-    <Compile Include="Drivers\MarkdownPagePartDriver.cs" />
     <Compile Include="Handlers\BitbucketSettingsPartHandler.cs" />
     <Compile Include="Handlers\MarkdownPagePartHandler.cs" />
     <Compile Include="Migrations\BaseMigrations.cs" />
@@ -131,7 +130,6 @@
     <Compile Include="Models\BitbucketRepositoryDataRecord.cs" />
     <Compile Include="Models\BitbucketRepositorySettings.cs" />
     <Compile Include="Models\BitbucketSettingsPart.cs" />
-    <Compile Include="Models\BitbucketSettingsPartRecord.cs" />
     <Compile Include="Models\MarkdownPagePart.cs" />
     <Compile Include="Models\MarkdownPagePartRecord.cs" />
     <Compile Include="ResourceManifests\BitbucketResourceManifest.cs" />

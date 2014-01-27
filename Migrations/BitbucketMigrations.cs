@@ -38,24 +38,13 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<int>("LastProcessedRevision")
                 );
 
-            SchemaBuilder.CreateTable(typeof(BitbucketSettingsPartRecord).Name,
-                table => table
-                    .ContentPartRecord()
-                    .Column<int>("MinutesBetweenPulls")
-                );
 
-
-            return 5;
+            return 6;
         }
 
         public int UpdateFrom1()
         {
-            SchemaBuilder.CreateTable(typeof(BitbucketSettingsPartRecord).Name,
-                table => table
-                    .ContentPartRecord()
-                    .Column<int>("MinutesBetweenPulls")
-                );
-
+            // Only BitbucketSettingsPartRecord table alteration was here.
 
             return 2;
         }
@@ -95,6 +84,13 @@ namespace OrchardHUN.ExternalPages.Migrations
                 );
 
             return 5;
+        }
+
+        public int UpdateFrom5()
+        {
+            SchemaBuilder.DropTable("BitbucketSettingsPartRecord");
+
+            return 6;
         }
     }
 }
