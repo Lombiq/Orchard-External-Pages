@@ -11,6 +11,7 @@ using System;
 using Orchard.Logging;
 using Orchard.Tasks;
 using Orchard.Exceptions;
+using Piedone.HelpfulLibraries.Tasks.Locking;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -20,7 +21,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private const string TaskType = "OrchardHUN.ExternalPages.BitbucketChangesetUpdater";
 
         private readonly IBitbucketService _bitbucketService;
-        private readonly IResolve<ILockFile> _lockFileResolve;
+        private readonly IResolve<IDistributedLock> _lockResolve;
         private readonly IScheduledTaskManager _scheduledTaskManager;
         private readonly IClock _clock;
         private readonly ISiteService _siteService;
@@ -30,13 +31,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
         public BitbucketChangesetUpdater(
             IBitbucketService bitbucketService,
-            IResolve<ILockFile> lockFileResolve,
+            IResolve<IDistributedLock> lockResolve,
             IScheduledTaskManager scheduledTaskManager,
             IClock clock,
             ISiteService siteService)
         {
             _bitbucketService = bitbucketService;
-            _lockFileResolve = lockFileResolve;
+            _lockResolve = lockResolve;
             _scheduledTaskManager = scheduledTaskManager;
             _clock = clock;
             _siteService = siteService;
@@ -49,7 +50,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             if (context.Task.TaskType != TaskType) return;
 
-            using (var lockFile = _lockFileResolve.Value)
+            using (var lockFile = _lockResolve.Value)
             {
                 if (!lockFile.TryAcquire(TaskType)) return;
 
