@@ -18,7 +18,7 @@ namespace OrchardHUN.ExternalPages.Models
         public virtual string AccountName { get; set; }
         public virtual string Slug { get; set; }
         public virtual string Username { get; set; }
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password), StringLengthMax]
         public virtual string Password { get; set; }
         public virtual bool MirrorFiles { get; set; }
         public virtual int MaximalFileSizeKB { get; set; }

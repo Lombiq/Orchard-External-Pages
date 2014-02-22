@@ -63,7 +63,7 @@ namespace OrchardHUN.ExternalPages.Drivers
                         savedRepository.AccountName = repository.AccountName;
                         savedRepository.Slug = repository.Slug;
                         savedRepository.Username = repository.Username;
-                        if (!String.IsNullOrEmpty(repository.Password) || String.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
+                        if (!string.IsNullOrEmpty(repository.Password) || string.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
                         savedRepository.MirrorFiles = repository.MirrorFiles;
                         savedRepository.MaximalFileSizeKB = repository.MaximalFileSizeKB;
                         savedRepository.SetPasswordEncrypted(_encryptionService, repository.Password);
@@ -76,7 +76,7 @@ namespace OrchardHUN.ExternalPages.Drivers
                 }
             }
 
-            if (part.NewRepository != null && !String.IsNullOrEmpty(part.NewRepository.AccountName))
+            if (part.NewRepository != null && !string.IsNullOrEmpty(part.NewRepository.AccountName))
             {
                 part.NewRepository.SetPasswordEncrypted(_encryptionService, part.NewRepository.Password);
                 _bitbucketService.RepositoryDataRepository.Create(part.NewRepository);

@@ -28,7 +28,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<string>("AccountName")
                     .Column<string>("Slug")
                     .Column<string>("Username")
-                    .Column<string>("Password", column => column.WithLength(4000))
+                    .Column<string>("Password", column => column.Unlimited())
                     .Column<bool>("MirrorFiles")
                     .Column<int>("MaximalFileSizeKB")
                     .Column<string>("UrlMappingsDefinition", column => column.Unlimited())
@@ -39,7 +39,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 );
 
 
-            return 6;
+            return 7;
         }
 
         public int UpdateFrom1()
@@ -91,6 +91,16 @@ namespace OrchardHUN.ExternalPages.Migrations
             SchemaBuilder.DropTable("BitbucketSettingsPartRecord");
 
             return 6;
+        }
+
+        public int UpdateFrom6()
+        {
+            SchemaBuilder.AlterTable(typeof(BitbucketRepositoryDataRecord).Name,
+                table => table
+                    .AlterColumn("Password", column => column.WithType(System.Data.DbType.String).Unlimited())
+                );
+
+            return 7;
         }
     }
 }
