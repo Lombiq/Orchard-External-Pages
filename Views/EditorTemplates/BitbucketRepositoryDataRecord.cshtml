@@ -79,6 +79,12 @@
                 @Html.ValidationMessageFor(m => m.Password)
             </li>
             <li>
+                @Html.LabelFor(m => m.PageContentTypeName, T("Page content type"))
+                @Html.TextBoxFor(m => m.PageContentTypeName, new { @class = "text singleline" })
+                @Html.ValidationMessageFor(m => m.PageContentTypeName)
+                <span class="hint">@T("This should be the name of the content type to use when saving pages. Once you save the settings the content type will be adjusted to include all of the necessary content parts (or it will be created even).")</span>
+            </li>
+            <li>
                 @Html.EditorFor(m => m.MirrorFiles)
                 <label for="@Html.FieldIdFor(m => m.MirrorFiles)" class="forcheckbox">@T("Mirror files")</label>
                 @Html.ValidationMessageFor(m => m.MirrorFiles)

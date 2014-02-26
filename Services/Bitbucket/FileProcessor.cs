@@ -44,7 +44,11 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         public void ProcessFiles(UpdateJobContext jobContext)
         {
             var repoData = _repository.Get(jobContext.RepositoryId);
+
             if (repoData == null) return;
+
+            if (string.IsNullOrEmpty(repoData.PageContentTypeName)) repoData.PageContentTypeName = WellKnownConstants.DefaultRepoPageContentType;
+
             var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
             var urlMappings = repoData.UrlMappings();
@@ -102,13 +106,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             {
                 var src = _apiService.FetchFromRepo<FileSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
 
-                if (file.Type != UpdateJobfileType.Added) page = FetchPage(fullRepoFilePath);
+                if (file.Type != UpdateJobfileType.Added) page = FetchPage(repoData.PageContentTypeName, fullRepoFilePath);
 
                 var isNew = page == null;
 
                 if (isNew)
                 {
-                    page = _contentManager.New(WellKnownConstants.RepoPageContentType);
+                    page = _contentManager.New(repoData.PageContentTypeName);
 
                     var autoroutePart = page.As<AutoroutePart>();
                     autoroutePart.CustomPattern = localPath;
@@ -149,7 +153,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
                 page.As<BodyPart>().Text = string.Join(Environment.NewLine, lines);
 
-                var parent = FindParent(repoBasePath, fullRepoFilePath);
+                var parent = FindParent(repoData.PageContentTypeName, repoBasePath, fullRepoFilePath);
                 if (parent != null) page.As<CommonPart>().Container = parent;
 
                 // This is needed after the title is set, because slug generation needs it
@@ -161,7 +165,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
             else
             {
-                page = FetchPage(fullRepoFilePath);
+                page = FetchPage(repoData.PageContentTypeName, fullRepoFilePath);
 
                 if (page == null) return;
 
@@ -169,16 +173,16 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
         }
 
-        private ContentItem FetchPage(string fullRepoFilePath)
+        private ContentItem FetchPage(string pageContentTypeName, string fullRepoFilePath)
         {
             return _contentManager
-                        .Query(WellKnownConstants.RepoPageContentType)
+                        .Query(pageContentTypeName)
                         .Where<MarkdownPagePartRecord>(record => record.RepoPath == fullRepoFilePath)
                         .List()
                         .SingleOrDefault();
         }
 
-        private ContentItem FindParent(string repoBasePath, string fullRepoFilePath)
+        private ContentItem FindParent(string pageContentTypeName, string repoBasePath, string fullRepoFilePath)
         {
             // Cutting off file name
             var fullRepoFolderPath = fullRepoFilePath.Substring(0, fullRepoFilePath.LastIndexOf("/"));
@@ -196,7 +200,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 if (_parentPagesCache.ContainsKey(parentPath)) return _parentPagesCache[parentPath];
 
                 var parent = _contentManager
-                    .Query(WellKnownConstants.RepoPageContentType)
+                    .Query(pageContentTypeName)
                     .Where<MarkdownPagePartRecord>(record => record.RepoPath == parentPath)
                     .List()
                     .SingleOrDefault();

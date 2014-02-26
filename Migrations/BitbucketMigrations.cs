@@ -29,6 +29,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<string>("Slug")
                     .Column<string>("Username")
                     .Column<string>("Password", column => column.Unlimited())
+                    .Column<string>("PageContentTypeName", column => column.WithLength(1024))
                     .Column<bool>("MirrorFiles")
                     .Column<int>("MaximalFileSizeKB")
                     .Column<string>("UrlMappingsDefinition", column => column.Unlimited())
@@ -39,7 +40,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 );
 
 
-            return 7;
+            return 8;
         }
 
         public int UpdateFrom1()
@@ -101,6 +102,16 @@ namespace OrchardHUN.ExternalPages.Migrations
                 );
 
             return 7;
+        }
+
+        public int UpdateFrom7()
+        {
+            SchemaBuilder.AlterTable(typeof(BitbucketRepositoryDataRecord).Name,
+                table => table
+                    .AddColumn<string>("PageContentTypeName", column => column.WithLength(1024))
+                );
+
+            return 8;
         }
     }
 }

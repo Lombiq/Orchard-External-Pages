@@ -20,6 +20,7 @@ namespace OrchardHUN.ExternalPages.Models
         public virtual string Username { get; set; }
         [DataType(DataType.Password), StringLengthMax]
         public virtual string Password { get; set; }
+        public virtual string PageContentTypeName { get; set; }
         public virtual bool MirrorFiles { get; set; }
         public virtual int MaximalFileSizeKB { get; set; }
         [StringLengthMax]
@@ -32,6 +33,7 @@ namespace OrchardHUN.ExternalPages.Models
 
         public BitbucketRepositoryDataRecord()
         {
+            PageContentTypeName = WellKnownConstants.DefaultRepoPageContentType;
             MaximalFileSizeKB = 1024;
             LastCheckedRevision = -1;
             LastProcessedRevision = -1;

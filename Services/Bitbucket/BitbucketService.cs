@@ -191,10 +191,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         public void Delete(int repositoryId)
         {
             var repoRecord = _repository.Get(repositoryId);
+
             if (repoRecord != null) _repository.Delete(repoRecord);
 
+            var pageContentType = repoRecord != null && !string.IsNullOrEmpty(repoRecord.PageContentTypeName) ? repoRecord.PageContentTypeName : WellKnownConstants.DefaultRepoPageContentType;
+
             var pages = _contentManager
-                .Query(WellKnownConstants.RepoPageContentType)
+                .Query(pageContentType)
                 .Where<MarkdownPagePartRecord>(record => record.RepoPath.StartsWith(UriHelper.Combine("bitbucket.org", repoRecord.AccountName, repoRecord.Slug)))
                 .List();
 
