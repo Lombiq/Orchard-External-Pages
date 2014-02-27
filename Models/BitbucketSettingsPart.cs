@@ -24,11 +24,6 @@ namespace OrchardHUN.ExternalPages.Models
 
         public BitbucketRepositoryDataRecord NewRepository { get; set; }
 
-        /// <summary>
-        /// This is to check whether the EP settings page is being posted or any other editor group from site settings.
-        /// </summary>
-        public bool IsBeingSaved { get; set; }
-
 
         public BitbucketSettingsPart()
         {

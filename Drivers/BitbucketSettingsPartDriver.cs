@@ -46,57 +46,60 @@ namespace OrchardHUN.ExternalPages.Drivers
         // GET
         protected override DriverResult Editor(BitbucketSettingsPart part, dynamic shapeHelper)
         {
-            return ContentShape("Parts_BitbucketSettings_SiteSettings",
-                () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts.BitbucketSettings.SiteSettings",
-                    Model: part,
-                    Prefix: Prefix)).OnGroup("ExternalPages");
+            return Editor(part, null, shapeHelper);
         }
 
         // POST
         protected override DriverResult Editor(BitbucketSettingsPart part, IUpdateModel updater, dynamic shapeHelper)
         {
-            updater.TryUpdateModel(part, Prefix, null, null);
-
-            if (part.IsBeingSaved)
-            {
-                if (part.Repositories != null)
+            return ContentShape("Parts_BitbucketSettings_SiteSettings",
+                () =>
                 {
-                    foreach (var repository in part.Repositories)
+                    if (updater != null)
                     {
-                        var savedRepository = _bitbucketService.RepositoryDataRepository.Get(repository.Id);
-                        if (savedRepository != null)
-                        {
-                            savedRepository.AccountName = repository.AccountName;
-                            savedRepository.Slug = repository.Slug;
-                            savedRepository.Username = repository.Username;
-                            if (!string.IsNullOrEmpty(repository.Password) || string.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
-                            savedRepository.PageContentTypeName = repository.PageContentTypeName;
-                            CreateOrUpdatePageType(repository.PageContentTypeName);
-                            savedRepository.MirrorFiles = repository.MirrorFiles;
-                            savedRepository.MaximalFileSizeKB = repository.MaximalFileSizeKB;
-                            savedRepository.SetPasswordEncrypted(_encryptionService, repository.Password);
+                        updater.TryUpdateModel(part, Prefix, null, null);
 
-                            if (savedRepository.UrlMappingsDefinition != repository.UrlMappingsDefinition)
+                        if (part.Repositories != null)
+                        {
+                            foreach (var repository in part.Repositories)
                             {
-                                savedRepository.UrlMappingsDefinition = repository.UrlMappingsDefinition;
+                                var savedRepository = _bitbucketService.RepositoryDataRepository.Get(repository.Id);
+                                if (savedRepository != null)
+                                {
+                                    savedRepository.AccountName = repository.AccountName;
+                                    savedRepository.Slug = repository.Slug;
+                                    savedRepository.Username = repository.Username;
+                                    if (!string.IsNullOrEmpty(repository.Password) || string.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
+                                    savedRepository.PageContentTypeName = repository.PageContentTypeName;
+                                    CreateOrUpdatePageType(repository.PageContentTypeName);
+                                    savedRepository.MirrorFiles = repository.MirrorFiles;
+                                    savedRepository.MaximalFileSizeKB = repository.MaximalFileSizeKB;
+                                    savedRepository.SetPasswordEncrypted(_encryptionService, repository.Password);
+
+                                    if (savedRepository.UrlMappingsDefinition != repository.UrlMappingsDefinition)
+                                    {
+                                        savedRepository.UrlMappingsDefinition = repository.UrlMappingsDefinition;
+                                    }
+                                }
                             }
                         }
+
+                        if (part.NewRepository != null && !string.IsNullOrEmpty(part.NewRepository.AccountName))
+                        {
+                            part.NewRepository.SetPasswordEncrypted(_encryptionService, part.NewRepository.Password);
+                            CreateOrUpdatePageType(part.NewRepository.PageContentTypeName);
+                            _bitbucketService.RepositoryDataRepository.Create(part.NewRepository);
+                            _notifier.Information(T("The new repository entry was created. Before it wil be updated you should populate it first."));
+                        }
+
+                        _bitbucketService.RepositoryDataRepository.Flush(); 
                     }
-                }
 
-                if (part.NewRepository != null && !string.IsNullOrEmpty(part.NewRepository.AccountName))
-                {
-                    part.NewRepository.SetPasswordEncrypted(_encryptionService, part.NewRepository.Password);
-                    CreateOrUpdatePageType(part.NewRepository.PageContentTypeName);
-                    _bitbucketService.RepositoryDataRepository.Create(part.NewRepository);
-                    _notifier.Information(T("The new repository entry was created. Before it wil be updated you should populate it first."));
-                }
-
-                _bitbucketService.RepositoryDataRepository.Flush(); 
-            }
-
-            return Editor(part, shapeHelper);
+                    return shapeHelper.EditorTemplate(
+                        TemplateName: "Parts.BitbucketSettings.SiteSettings",
+                        Model: part,
+                        Prefix: Prefix);
+                }).OnGroup("ExternalPages");
         }
 
 
