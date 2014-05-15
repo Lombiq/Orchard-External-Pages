@@ -113,6 +113,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 if (isNew) page = _contentManager.New(repoData.PageContentTypeName);
 
                 var pagePart = page.As<MarkdownPagePart>();
+                // We're updating the path for the repo file in the DB if it doesn't match the one that comes from the repo.
+                // This is needed to overcome the issue caused by the case-sensitive URLs on BitBucket, when the casing of any character changes in the file path.
                 if (pagePart.RepoPath != fullRepoFilePath)
                 {
                     var autoroutePart = page.As<AutoroutePart>();
