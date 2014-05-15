@@ -42,7 +42,7 @@ namespace OrchardHUN.ExternalPages.Drivers
 
                     if (repo == null) return shapeHelper.Empty(); // Comes from Helpful Libraries
 
-                    var repoLink = "https://bitbucket.org/" + repo.AccountName + "/" + repo.Slug + "/src/" + repo.LastCheckedNode + "/" + localPath + "?at=default";
+                    var repoLink = string.Format("https://bitbucket.org/{0}/{1}/src/{2}/{3}?at=default", repo.AccountName, repo.Slug, repo.LastCheckedNode, localPath);
 
                     return shapeHelper.Parts_MarkdownPage_BitbucketEditLink(RepositoryFileLink: repoLink);
                 });
