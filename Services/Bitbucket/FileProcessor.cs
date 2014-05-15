@@ -110,10 +110,11 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
                 var isNew = page == null;
 
-                if (isNew)
-                {
-                    page = _contentManager.New(repoData.PageContentTypeName);
+                if (isNew) page = _contentManager.New(repoData.PageContentTypeName);
 
+                var pagePart = page.As<MarkdownPagePart>();
+                if (pagePart.RepoPath != fullRepoFilePath)
+                {
                     var autoroutePart = page.As<AutoroutePart>();
                     autoroutePart.CustomPattern = localPath;
                     autoroutePart.UseCustomPattern = true;
