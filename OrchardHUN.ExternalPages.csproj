@@ -80,7 +80,7 @@
     <Content Include="Placement.info">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Licence.md" />
+    <None Include="Licence.md" />
     <None Include="Styles\orchardhun-externalpages-bitbucket.less" />
     <Content Include="Styles\orchardhun-externalpages-bitbucket.css">
       <DependentUpon>orchardhun-externalpages-bitbucket.less</DependentUpon>
