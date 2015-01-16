@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using OrchardHUN.ExternalPages.Models;
 using OrchardHUN.ExternalPages.Services.Bitbucket;
@@ -19,8 +20,8 @@ namespace OrchardHUN.ExternalPages.Drivers
         {
             _bitbucketService = bitbucketService;
         }
-	
-			
+    
+            
         protected override DriverResult Display(MarkdownPagePart part, string displayType, dynamic shapeHelper)
         {
             if (!part.RepoPath.StartsWith("bitbucket.org")) return null;
@@ -46,6 +47,16 @@ namespace OrchardHUN.ExternalPages.Drivers
 
                     return shapeHelper.Parts_MarkdownPage_BitbucketEditLink(RepositoryFileLink: repoLink);
                 });
+        }
+
+        protected override void Exporting(MarkdownPagePart part, ExportContentContext context)
+        {
+            context.Element(part.PartDefinition.Name).SetAttributeValue("RepoPath", part.RepoPath);
+        }
+
+        protected override void Importing(MarkdownPagePart part, ImportContentContext context)
+        {
+            context.ImportAttribute(part.PartDefinition.Name, "RepoPath", value => part.RepoPath = value);
         }
     }
 }
