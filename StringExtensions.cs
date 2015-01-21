@@ -5,12 +5,12 @@ namespace OrchardHUN.ExternalPages
     {
         public static bool IsMarkdownFilePath(this string path)
         {
-            return path.EndsWith(".md");
+            return path.EndsWith(".md", System.StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static bool IsIndexFilePath(this string path)
         {
-            return path.EndsWith("Index.md");
+            return path.EndsWith("Index.md", System.StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
