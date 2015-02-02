@@ -6,18 +6,18 @@ Version: 0.9
 OrchardVersion: 1.8
 Description: Deals with aggregating pages from external sources
 Features:
-    OrchardHUN.ExternalPages:
+	OrchardHUN.ExternalPages:
 		Name: External Pages
-        Description: Deals with aggregating pages from external sources
+		Description: Deals with aggregating pages from external sources
 		Category: Content
 		Dependencies: Markdown, Orchard.Alias, Orchard.Autoroute, Title
-    OrchardHUN.ExternalPages.Bitbucket.Services:
+	OrchardHUN.ExternalPages.Bitbucket.Services:
 		Name: External Pages: Bitbucket Services
-        Description: Provides services to help accessing Bitbucket, for developers.
+		Description: Provides services to help accessing Bitbucket, for developers.
 		Category: Developer
 		Dependencies: Lombiq.RestSharp
-    OrchardHUN.ExternalPages.Bitbucket:
+	OrchardHUN.ExternalPages.Bitbucket:
 		Name: External Pages: Bitbucket
-        Description: Aggregates pages from a Bitbucket repository
+		Description: Aggregates pages from a Bitbucket repository
 		Category: Content
 		Dependencies: OrchardHUN.ExternalPages, OrchardHUN.ExternalPages.Bitbucket.Services, Piedone.HelpfulLibraries.DependencyInjection, Piedone.HelpfulLibraries.Tasks.Jobs, Piedone.HelpfulLibraries.Utilities
