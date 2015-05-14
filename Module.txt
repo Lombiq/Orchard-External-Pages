@@ -3,7 +3,7 @@ AntiForgery: enabled
 Author: The Orchard Hungary Team / Lombiq
 Website: http://orchardexternalpages.codeplex.com
 Version: 0.9
-OrchardVersion: 1.8.2
+OrchardVersion: 1.9.0
 Description: Deals with aggregating pages from external sources
 Features:
 	OrchardHUN.ExternalPages:
