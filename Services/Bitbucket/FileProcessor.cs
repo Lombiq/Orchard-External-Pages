@@ -181,7 +181,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             return _contentManager
                         .Query(pageContentTypeName)
                         .Where<MarkdownPagePartRecord>(record => record.RepoPath == fullRepoFilePath)
-                        .List()
+                        .Slice(0, 1)
                         .SingleOrDefault();
         }
 
@@ -205,7 +205,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 var parent = _contentManager
                     .Query(pageContentTypeName)
                     .Where<MarkdownPagePartRecord>(record => record.RepoPath == parentPath)
-                    .List()
+                    .Slice(0, 1)
                     .SingleOrDefault();
                 if (parent != null)
                 {
