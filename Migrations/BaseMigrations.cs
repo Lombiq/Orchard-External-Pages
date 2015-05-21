@@ -14,8 +14,8 @@ namespace OrchardHUN.ExternalPages.Migrations
         {
             _storageProvider = storageProvider;
         }
-	
-			
+    
+            
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
