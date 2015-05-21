@@ -25,7 +25,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                 )
             .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
-                    .CreateIndex("RepoPath", new string[] { "RepoPath" })
+                    .CreateIndex("RepoPath", "RepoPath")
                 );
 
             SetupRepoPageContentType(ContentDefinitionManager, WellKnownConstants.DefaultRepoPageContentType);
