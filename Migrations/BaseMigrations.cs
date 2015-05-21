@@ -21,7 +21,7 @@ namespace OrchardHUN.ExternalPages.Migrations
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
                     .ContentPartRecord()
-                    .Column<string>("RepoPath", column => column.Unique())
+                    .Column<string>("RepoPath")
                 )
             .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
