@@ -18,8 +18,8 @@ namespace OrchardHUN.ExternalPages.Migrations
             _encryptionService = encryptionService;
             _repository = repository;
         }
-	
-			
+    
+            
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(BitbucketRepositoryDataRecord).Name,

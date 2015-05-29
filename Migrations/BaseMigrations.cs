@@ -14,18 +14,18 @@ namespace OrchardHUN.ExternalPages.Migrations
         {
             _storageProvider = storageProvider;
         }
-	
-			
+    
+            
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
                     .ContentPartRecord()
-                    .Column<string>("RepoPath", column => column.Unique())
+                    .Column<string>("RepoPath")
                 )
             .AlterTable(typeof(MarkdownPagePartRecord).Name,
                 table => table
-                    .CreateIndex("RepoPath", new string[] { "RepoPath" })
+                    .CreateIndex("RepoPath", "RepoPath")
                 );
 
             SetupRepoPageContentType(ContentDefinitionManager, WellKnownConstants.DefaultRepoPageContentType);

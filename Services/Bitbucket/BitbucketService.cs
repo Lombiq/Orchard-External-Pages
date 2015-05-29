@@ -196,6 +196,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             var pageContentType = repoRecord != null && !string.IsNullOrEmpty(repoRecord.PageContentTypeName) ? repoRecord.PageContentTypeName : WellKnownConstants.DefaultRepoPageContentType;
 
+            // This won't scale, but works fine up to a couple hundred pages.
             var pages = _contentManager
                 .Query(pageContentType)
                 .Where<MarkdownPagePartRecord>(record => record.RepoPath.StartsWith(UriHelper.Combine("bitbucket.org", repoRecord.AccountName, repoRecord.Slug)))
