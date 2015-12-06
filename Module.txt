@@ -1,7 +1,7 @@
 Name: External Pages
 AntiForgery: enabled
 Author: The Orchard Hungary Team / Lombiq
-Website: http://orchardexternalpages.codeplex.com
+Website: https://github.com/Lombiq/Orchard-External-Pages
 Version: 0.9
 OrchardVersion: 1.9.0
 Description: Deals with aggregating pages from external sources

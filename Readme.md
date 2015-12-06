@@ -38,7 +38,7 @@ Markdown (.md) files are converted to content items.
 
 E.g. if there's an Index.md and Other.md in the folder Directory, that "Directory/" path will lead to Index.md and "Directory/Other" to Other.md.
 
-### See the [Version history](Docs/VersionHistory.md)
+**See the [Version history](Docs/VersionHistory.md).**
 
 External Pages drives the [Orchard Dojo Library](http://orcharddojo.net/orchard-resources/Library/) and the [DotNest Knowledge Base](http://dotnest.com/knowledge-base/).
 
