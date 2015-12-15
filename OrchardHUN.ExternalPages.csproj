@@ -78,9 +78,6 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Licence.md" />
-    <Content Include="Styles\orchardhun-externalpages-bitbucket.css.map">
-      <DependentUpon>orchardhun-externalpages-bitbucket.css</DependentUpon>
-    </Content>
     <None Include="Styles\orchardhun-externalpages-bitbucket.less" />
     <Content Include="Styles\orchardhun-externalpages-bitbucket.css">
       <DependentUpon>orchardhun-externalpages-bitbucket.less</DependentUpon>
