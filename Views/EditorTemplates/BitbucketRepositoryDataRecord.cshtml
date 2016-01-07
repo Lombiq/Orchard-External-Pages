@@ -20,13 +20,13 @@
         @if (isExisting)
         {
             @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
-            <span class="hint">@T("Deleting the repository will also remove content items.")</span>
+            @Html.Hint(T("Deleting the repository will also remove content items."))
             @Html.ActionLink(T("Repopulate").Text, "RepopulateRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "UnsafeUrl", @class = "button" })
             if (!Model.WasChecked())
             {
-                <span class="hint">@T("This repository wasn't populated yet.")</span>
+                @Html.Hint(T("This repository wasn't populated yet."))
             }
-            <span class="hint">@T("Bypassing changeset processing you can force a repopulation of the local storage from the repository's current state. Make sure to set up url mappings properly first. Before the initial population the repository's content won't be pulled in so clicking this is necessary before the content will be auto-updated.")</span>
+            @Html.Hint(T("Bypassing changeset processing you can force a repopulation of the local storage from the repository's current state. Make sure to set up url mappings properly first. Before the initial population the repository's content won't be pulled in so clicking this is necessary before the content will be auto-updated."))
             if (Model.WasProcessed())
             {
                 @T("Open root urls:")
@@ -82,25 +82,25 @@
                 @Html.LabelFor(m => m.PageContentTypeName, T("Page content type"))
                 @Html.TextBoxFor(m => m.PageContentTypeName, new { @class = "text singleline" })
                 @Html.ValidationMessageFor(m => m.PageContentTypeName)
-                <span class="hint">@T("This should be the name of the content type to use when saving pages. Once you save the settings the content type will be adjusted to include all of the necessary content parts (or it will be created even).")</span>
+                @Html.Hint(T("This should be the name of the content type to use when saving pages. Once you save the settings the content type will be adjusted to include all of the necessary content parts (or it will be created even)."))
             </li>
             <li>
                 @Html.EditorFor(m => m.MirrorFiles)
                 <label for="@Html.FieldIdFor(m => m.MirrorFiles)" class="forcheckbox">@T("Mirror files")</label>
                 @Html.ValidationMessageFor(m => m.MirrorFiles)
-                <span class="hint">@T("Check to download non-markdown files (like images, documents...) to the Orchard file system so you can access them from under a local url. Markdown files will be downloaded and converted to content items regardless of this option.")</span>
+                @Html.Hint(T("Check to download non-markdown files (like images, documents...) to the Orchard file system so you can access them from under a local url. Markdown files will be downloaded and converted to content items regardless of this option."))
             </li>
             <li>
                 @Html.LabelFor(m => m.MaximalFileSizeKB, T("Maximal file size (in KB)"))
                 @Html.TextBoxFor(m => m.MaximalFileSizeKB, new { @class = "small" })
                 @Html.ValidationMessageFor(m => m.MaximalFileSizeKB)
-                <span class="hint">@T("Define a maximal file size for non-markdown files. If a file to be mirrored locally is too large the background task downloading it can time out.")</span>
+                @Html.Hint(T("Define a maximal file size for non-markdown files. If a file to be mirrored locally is too large the background task downloading it can time out."))
             </li>
             <li>
                 @Html.LabelFor(m => m.UrlMappingsDefinition, T("Url mappings"))
                 @Html.TextAreaFor(m => m.UrlMappingsDefinition, new { @class = "text singleline" })
                 @Html.ValidationMessageFor(m => m.UrlMappingsDefinition)
-                <span class="hint">@T("Write mappings between the path of a document folder in the repo and the root url of the corresponding document items here, separated with a colon, one per line. Sample: Folder/In/Repo: LocalRoot|Another/Folder/In/Repo: OtherLocalRoot.")</span>
+                @Html.Hint(T("Write mappings between the path of a document folder in the repo and the root url of the corresponding document items here, separated with a colon, one per line. Sample: Folder/In/Repo: LocalRoot|Another/Folder/In/Repo: OtherLocalRoot."))
             </li>
         </ol>
     </div>
