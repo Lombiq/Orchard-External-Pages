@@ -69,7 +69,10 @@ namespace OrchardHUN.ExternalPages.Drivers
                                     savedRepository.AccountName = repository.AccountName;
                                     savedRepository.Slug = repository.Slug;
                                     savedRepository.Username = repository.Username;
-                                    if (!string.IsNullOrEmpty(repository.Password) || string.IsNullOrEmpty(repository.Username)) savedRepository.Password = repository.Password;
+                                    if (!string.IsNullOrEmpty(repository.Password) || string.IsNullOrEmpty(repository.Username))
+                                    {
+                                        savedRepository.Password = repository.Password;
+                                    }
                                     savedRepository.PageContentTypeName = repository.PageContentTypeName;
                                     CreateOrUpdatePageType(repository.PageContentTypeName);
                                     savedRepository.MirrorFiles = repository.MirrorFiles;
