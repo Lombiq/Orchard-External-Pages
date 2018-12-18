@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using Orchard.Environment.Extensions;
 using Piedone.HelpfulLibraries.Utilities;
@@ -11,6 +12,14 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     [OrchardFeature("OrchardHUN.ExternalPages.Bitbucket.Services")]
     public class BitbucketApiService : IBitbucketApiService
     {
+        static BitbucketApiService()
+        {
+            // This needs to be set explicitly for Bitbucket download URLs. 
+            // See: https://support.microsoft.com/en-us/help/3069494/cannot-connect-to-a-server-by-using-the-servicepointmanager-or-sslstre
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        }
+
+
         public TResponse Fetch<TResponse>(IBitbucketAuthConfig authConfig, string path) where TResponse : new()
         {
             var restObjects = PrepareRest(authConfig, path);
@@ -31,7 +40,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         private RestObjects PrepareRest(IBitbucketAuthConfig authConfig, string path)
         {
             var client = new RestClient("https://api.bitbucket.org/1.0/");
-            if (!String.IsNullOrEmpty(authConfig.Username)) client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
+            if (!string.IsNullOrEmpty(authConfig.Username)) client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
             return new RestObjects(client, new RestRequest(path));
         }
 
