@@ -18,8 +18,8 @@ namespace OrchardHUN.ExternalPages.Migrations
             _encryptionService = encryptionService;
             _repository = repository;
         }
-    
-            
+
+
         public int Create()
         {
             SchemaBuilder.CreateTable(typeof(BitbucketRepositoryDataRecord).Name,
@@ -34,9 +34,7 @@ namespace OrchardHUN.ExternalPages.Migrations
                     .Column<int>("MaximalFileSizeKB")
                     .Column<string>("UrlMappingsDefinition", column => column.Unlimited())
                     .Column<string>("LastCheckedNode")
-                    .Column<int>("LastCheckedRevision")
                     .Column<string>("LastProcessedNode")
-                    .Column<int>("LastProcessedRevision")
                 );
 
 

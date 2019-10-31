@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -6,20 +7,19 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
     {
         public int RepositoryId { get; private set; }
         public string Node { get; private set; }
-        public int Revision { get; private set; }
         public IEnumerable<UpdateJobFile> Files { get; private set; }
         public bool IsRepopulation { get; private set; }
 
-        public UpdateJobContext(int repositoryId, string node, int revision, IEnumerable<UpdateJobFile> files, bool isRepopulation)
+        public UpdateJobContext(int repositoryId, string node, IEnumerable<UpdateJobFile> files, bool isRepopulation)
         {
             RepositoryId = repositoryId;
             Node = node;
-            Revision = revision;
             Files = files;
             IsRepopulation = isRepopulation;
         }
     }
 
+    [DebuggerDisplay("{Type}: {Path}")]
     public class UpdateJobFile
     {
         public string Path { get; private set; }
@@ -37,6 +37,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         Added,
         Modified,
         Removed,
-        AddedOrModified // Needed for when Repopulate() is called: there we don't know wether a file was just created or is modified
+        // Needed for when Repopulate() is called: there we don't know whether a file was just created or is modified
+        AddedOrModified
     }
 }

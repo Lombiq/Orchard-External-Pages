@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Orchard.Autoroute.Models;
+﻿using Orchard.Autoroute.Models;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
@@ -12,6 +7,12 @@ using Orchard.Environment.Extensions;
 using Orchard.Security;
 using OrchardHUN.ExternalPages.Models;
 using Piedone.HelpfulLibraries.Utilities;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -53,8 +54,8 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             var urlMappings = repoData.UrlMappings();
 
-            // Ordering so files on the top of the folder hierarchy and index files are first. This way subsequent files will be able to find 
-            // their parent.
+            // Ordering so files on the top of the folder hierarchy and index files are first. This way subsequent
+            // files will be able to find their parent.
             foreach (var file in jobContext.Files.OrderBy(f => f.Path.Count(c => c == '/')).ThenBy(f => f.Path.IsIndexFilePath() ? 0 : 1))
             {
                 Process(file, urlMappings, repoData, repoSettings, jobContext);
@@ -68,7 +69,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             if (mapping == null) return;
 
             var localPath = file.Path;
-            if (!String.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath.Trim('/'));
+            if (!string.IsNullOrEmpty(mapping.RepoPath)) localPath = localPath.Replace(mapping.RepoPath, mapping.LocalPath.Trim('/'));
             else localPath = UriHelper.Combine(mapping.LocalPath, localPath);
 
             if (file.Path.IsMarkdownFilePath()) ProcessPage(file, localPath, repoData, repoSettings, jobContext);
@@ -78,14 +79,13 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
         private void ProcessFile(UpdateJobFile file, string localPath, BitbucketRepositoryDataRecord repoData, BitbucketRepositorySettings repoSettings, UpdateJobContext jobContext)
         {
-            if (String.IsNullOrEmpty(Path.GetExtension(localPath))) return;
+            if (string.IsNullOrEmpty(Path.GetExtension(localPath))) return;
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var sizeProbe = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), Path.GetDirectoryName(file.Path)));
-                var size = sizeProbe.Files.Where(f => f.Path == file.Path).Single().Size;
-                if (size > repoData.MaximalFileSizeKB * 1024) return;
-                _fileService.SaveFile(localPath, _apiService.FetchFromRepo(repoSettings, UriHelper.Combine("raw", jobContext.Revision.ToString(), file.Path)));
+                var sizeProbe = _apiService.FetchFromRepo<Meta>(repoSettings, UriHelper.Combine("src", jobContext.Node.ToString(), file.Path, "?format=meta"));
+                if (sizeProbe.Size > repoData.MaximalFileSizeKB * 1024) return;
+                _fileService.SaveFile(localPath, _apiService.FetchFromRepo(repoSettings, UriHelper.Combine("raw", jobContext.Node.ToString(), file.Path)));
             }
             else
             {
@@ -104,7 +104,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (file.Type != UpdateJobfileType.Removed)
             {
-                var src = _apiService.FetchFromRepo<FileSrcResponse>(repoSettings, UriHelper.Combine("src", jobContext.Revision.ToString(), file.Path));
+                var src = Encoding.UTF8.GetString(_apiService.FetchFromRepo(repoSettings, UriHelper.Combine("src", jobContext.Node.ToString(), file.Path)));
 
                 if (file.Type != UpdateJobfileType.Added) page = FetchPage(repoData.PageContentTypeName, fullRepoFilePath);
 
@@ -113,8 +113,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 if (isNew) page = _contentManager.New(repoData.PageContentTypeName);
 
                 var pagePart = page.As<MarkdownPagePart>();
-                // We're updating the path for the repo file in the DB if it doesn't match the one that comes from the repo.
-                // This is needed to overcome the issue caused by the case-sensitive URLs on BitBucket, when the casing of any character changes in the file path.
+                // We're updating the path for the repo file in the DB if it doesn't match the one that comes from the
+                // repo. This is needed to overcome the issue caused by the case-sensitive URLs on BitBucket, when the
+                // casing of any character changes in the file path.
                 if (pagePart.RepoPath != fullRepoFilePath)
                 {
                     var autoroutePart = page.As<AutoroutePart>();
@@ -124,8 +125,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                     page.As<MarkdownPagePart>().RepoPath = fullRepoFilePath;
                 }
 
-                // Searching for the (first) title in the markdown text. Doesn't work if the text is less than or equal to a single line.
-                var lines = Regex.Split(src.Data, "\r\n|\r|\n").ToList();
+                // Searching for the (first) title in the markdown text. Doesn't work if the text is less than or equal
+                // to a single line.
+                var lines = Regex.Split(src, "\r\n|\r|\n").ToList();
                 int i = 1;
                 var titleFound = false;
                 var title = string.Empty;

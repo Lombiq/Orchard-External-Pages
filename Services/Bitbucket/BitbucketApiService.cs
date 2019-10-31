@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Web;
-using Orchard.Environment.Extensions;
-using Piedone.HelpfulLibraries.Utilities;
+﻿using Orchard.Environment.Extensions;
 using RestSharp;
+using System;
+using System.Net;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -39,8 +35,11 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
         private RestObjects PrepareRest(IBitbucketAuthConfig authConfig, string path)
         {
-            var client = new RestClient("https://api.bitbucket.org/1.0/");
-            if (!string.IsNullOrEmpty(authConfig.Username)) client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
+            var client = new RestClient("https://api.bitbucket.org/2.0/");
+            if (!string.IsNullOrEmpty(authConfig.Username))
+            {
+                client.Authenticator = new HttpBasicAuthenticator(authConfig.Username, authConfig.Password);
+            }
             return new RestObjects(client, new RestRequest(path));
         }
 

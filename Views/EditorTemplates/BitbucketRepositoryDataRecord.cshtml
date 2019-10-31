@@ -21,7 +21,8 @@
         {
             @Html.ActionLink(T("Delete repository").Text, "DeleteRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl", @class = "button" })
             @Html.Hint(T("Deleting the repository will also remove content items."))
-            @Html.ActionLink(T("Repopulate").Text, "RepopulateRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "UnsafeUrl", @class = "button" })
+            <strong>@T("The repopulate feature is currently disabled as it needs work to adapt it to v2.0 of the Bitbucket API. See <a href=\"https://github.com/Lombiq/Orchard-External-Pages/issues/2\">this issue</a>.")</strong>
+            @*@Html.ActionLink(T("Repopulate").Text, "RepopulateRepository", "BitbucketAdmin", new { Area = "OrchardHUN.ExternalPages", Id = Model.Id, ReturnUrl = Context.Request.RawUrl }, new { itemprop = "UnsafeUrl", @class = "button" })*@
             if (!Model.WasChecked())
             {
                 @Html.Hint(T("This repository wasn't populated yet."))

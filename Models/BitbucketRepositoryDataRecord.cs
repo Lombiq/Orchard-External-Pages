@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Orchard.Data.Conventions;
+using Orchard.Environment.Extensions;
+using Orchard.Security;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Orchard.Data.Conventions;
-using Orchard.Environment.Extensions;
-using Orchard.Security;
-using OrchardHUN.ExternalPages.Services.Bitbucket;
 
 namespace OrchardHUN.ExternalPages.Models
 {
@@ -26,7 +25,6 @@ namespace OrchardHUN.ExternalPages.Models
         [StringLengthMax]
         public virtual string UrlMappingsDefinition { get; set; }
         public virtual string LastCheckedNode { get; set; }
-        public virtual int LastCheckedRevision { get; set; }
         public virtual string LastProcessedNode { get; set; }
         public virtual int LastProcessedRevision { get; set; }
 
@@ -35,7 +33,6 @@ namespace OrchardHUN.ExternalPages.Models
         {
             PageContentTypeName = WellKnownConstants.DefaultRepoPageContentType;
             MaximalFileSizeKB = 1024;
-            LastCheckedRevision = -1;
             LastProcessedRevision = -1;
         }
     }
@@ -45,12 +42,12 @@ namespace OrchardHUN.ExternalPages.Models
     {
         public static IEnumerable<UrlMapping> UrlMappings(this BitbucketRepositoryDataRecord settings)
         {
-            if (String.IsNullOrEmpty(settings.UrlMappingsDefinition)) return Enumerable.Empty<UrlMapping>();
+            if (string.IsNullOrEmpty(settings.UrlMappingsDefinition)) return Enumerable.Empty<UrlMapping>();
 
             var mappings = new List<UrlMapping>();
             foreach (var mappingLine in Regex.Split(settings.UrlMappingsDefinition.Trim(), "\r\n|\r|\n"))
             {
-                if (!String.IsNullOrEmpty(mappingLine))
+                if (!string.IsNullOrEmpty(mappingLine))
                 {
                     var sides = mappingLine.Trim().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
                     if (sides.Length == 2)
@@ -69,12 +66,12 @@ namespace OrchardHUN.ExternalPages.Models
 
         public static bool WasChecked(this BitbucketRepositoryDataRecord settings)
         {
-            return !String.IsNullOrEmpty(settings.LastCheckedNode);
+            return !string.IsNullOrEmpty(settings.LastCheckedNode);
         }
 
         public static bool WasProcessed(this BitbucketRepositoryDataRecord settings)
         {
-            return !String.IsNullOrEmpty(settings.LastProcessedNode);
+            return !string.IsNullOrEmpty(settings.LastProcessedNode);
         }
 
         public static string SetPasswordEncrypted(this BitbucketRepositoryDataRecord settings, IEncryptionService encryptionService, string plainPassword)

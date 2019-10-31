@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Orchard.ContentManagement;
+﻿using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
-using OrchardHUN.ExternalPages.Models;
-using Piedone.HelpfulLibraries.Utilities;
-using Piedone.HelpfulLibraries.Tasks.Jobs;
 using Orchard.Security;
+using OrchardHUN.ExternalPages.Models;
+using Piedone.HelpfulLibraries.Tasks.Jobs;
+using Piedone.HelpfulLibraries.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OrchardHUN.ExternalPages.Services.Bitbucket
 {
@@ -48,7 +48,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             var repoData = GetRepositoryDataOrThrow(repositoryId);
             var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
-            var lastChangeset = _apiService.FetchFromRepo<ChangesetsResponse>(repoSettings, "changesets?limit=1").Changesets.FirstOrDefault();
+            var lastChangeset = _apiService.FetchFromRepo<CommitsResponse>(repoSettings, "commits/default").Values.FirstOrDefault();
 
             if (lastChangeset == null) return;
 
@@ -56,7 +56,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             recursivelyFetchFileList =
                 (path) =>
                 {
-                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", lastChangeset.Revision.ToString(), path, "/"));
+                    var responseData = _apiService.FetchFromRepo<FolderSrcResponse>(repoSettings, UriHelper.Combine("src", lastChangeset.Hash.ToString(), path, "/"));
 
                     if (responseData.Directories == null) throw new ApplicationException("The path " + path + " was not found in the repo.");
 
@@ -91,16 +91,14 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
                 var jobContext = new UpdateJobContext(
                                     repositoryId,
-                                    lastChangeset.Node,
-                                    lastChangeset.Revision,
+                                    lastChangeset.Hash,
                                     jobFiles,
                                     true);
 
                 _jobManager.CreateJob(Industry, jobContext, 99);
             }
 
-            repoData.LastCheckedNode = lastChangeset.Node;
-            repoData.LastCheckedRevision = lastChangeset.Revision;
+            repoData.LastCheckedNode = lastChangeset.Hash;
             repoData.LastProcessedNode = "";
             repoData.LastProcessedRevision = -1;
         }
@@ -109,46 +107,64 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repoData = GetRepositoryDataOrThrow(repositoryId);
 
-            if (String.IsNullOrEmpty(repoData.LastCheckedNode)) throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
-
-            var changesets = _apiService.FetchFromRepo<ChangesetsResponse>(new BitbucketRepositorySettings(repoData, _encryptionService), "changesets?limit=50").Changesets;
-
-            var lastChangeset = changesets.Where(changeset => changeset.Node == repoData.LastCheckedNode).SingleOrDefault();
-            if (lastChangeset != null)
+            if (string.IsNullOrEmpty(repoData.LastCheckedNode))
             {
-                var lastChangesetIndex = changesets.IndexOf(lastChangeset);
-                changesets.RemoveRange(0, lastChangesetIndex + 1);
+                throw new InvalidOperationException("The repository with the id " + repositoryId + " should be populated first.");
             }
 
-            if (changesets.Count == 0) return;
+            var commits = _apiService
+                .FetchFromRepo<CommitsResponse>(new BitbucketRepositorySettings(repoData, _encryptionService), "commits/default")
+                .Values;
 
-            lastChangeset = changesets.Last();
-            repoData.LastCheckedNode = lastChangeset.Node;
-            repoData.LastCheckedRevision = lastChangeset.Revision;
+            // So the oldest ones are at the top.
+            commits.Reverse();
+
+            var lastChangeset = commits.Where(commit => commit.Hash == repoData.LastCheckedNode).SingleOrDefault();
+            if (lastChangeset != null)
+            {
+                var lastChangesetIndex = commits.IndexOf(lastChangeset);
+                commits.RemoveRange(0, lastChangesetIndex + 1);
+            }
+
+            if (commits.Count == 0) return;
+
+            repoData.LastCheckedNode = commits.Last().Hash;
 
             var urlMappings = repoData.UrlMappings();
 
-            foreach (var changeset in changesets.Where(changeset => changeset.Branch == "default"))
+            // Enumerating the commits in reverse so older commits will be processed first. Thus if the same files are
+            // changed new changes will overwrite old ones.
+            foreach (var commit in commits)
             {
-                var files = changeset.Files.Where(file => urlMappings.Any(mapping => file.File.StartsWith(mapping.RepoPath)));
-                var fileCount = files.Count();
+                var diffStats = _apiService
+                    .FetchFromRepo<DiffStat>(new BitbucketRepositorySettings(repoData, _encryptionService), "diffstat/" + commit.Hash)
+                    .Values;
+                var diffs = diffStats.Where(diffStat => urlMappings.Any(mapping => diffStat.New.Path.StartsWith(mapping.RepoPath)));
+                var diffCount = diffs.Count();
 
-                if (fileCount != 0)
+                if (diffCount != 0)
                 {
-                    var jobFiles = new List<UpdateJobFile>(fileCount);
-                    foreach (var file in files)
+                    var jobFiles = new List<UpdateJobFile>(diffCount);
+                    foreach (var diff in diffs)
                     {
-                        var type = UpdateJobfileType.Added;
-                        if (file.Type == "modified") type = UpdateJobfileType.Modified;
-                        else if (file.Type == "removed") type = UpdateJobfileType.Removed;
+                        if (diff.Status != "renamed")
+                        {
+                            var type = UpdateJobfileType.Added;
+                            if (diff.Status == "modified") type = UpdateJobfileType.Modified;
+                            else if (diff.Status == "removed") type = UpdateJobfileType.Removed;
 
-                        jobFiles.Add(new UpdateJobFile(file.File, type));
+                            jobFiles.Add(new UpdateJobFile(diff.New.Path, type));
+                        }
+                        else
+                        {
+                            jobFiles.Add(new UpdateJobFile(diff.Old.Path, UpdateJobfileType.Removed));
+                            jobFiles.Add(new UpdateJobFile(diff.New.Path, UpdateJobfileType.Added));
+                        }
                     }
 
                     var jobContext = new UpdateJobContext(
                                         repositoryId,
-                                        changeset.Node,
-                                        changeset.Revision,
+                                        commit.Hash,
                                         jobFiles,
                                         false);
 
@@ -174,17 +190,19 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 return;
             }
 
-            // If it's a repopulation we'll have multiple jobs with the same revsion for each mapping, that's why the second clause
-            if (jobContext.Revision <= repoData.LastProcessedRevision && !jobContext.IsRepopulation)
-            {
-                _jobManager.Done(job);
-                return;
-            }
+            // The following code was here but since revisions were removed from the BB API we should handle it somehow
+            // else.
+            // If it's a repopulation we'll have multiple jobs with the same revision for each mapping, that's why the
+            // second clause.
+            //if (jobContext.Revision <= repoData.LastProcessedRevision && !jobContext.IsRepopulation)
+            //{
+            //    _jobManager.Done(job);
+            //    return;
+            //}
 
             _fileProcessor.ProcessFiles(jobContext);
 
             repoData.LastProcessedNode = jobContext.Node;
-            repoData.LastProcessedRevision = jobContext.Revision;
             _jobManager.Done(job);
         }
 
@@ -194,7 +212,9 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
 
             if (repoRecord != null) _repository.Delete(repoRecord);
 
-            var pageContentType = repoRecord != null && !string.IsNullOrEmpty(repoRecord.PageContentTypeName) ? repoRecord.PageContentTypeName : WellKnownConstants.DefaultRepoPageContentType;
+            var pageContentType =
+                repoRecord != null &&
+                !string.IsNullOrEmpty(repoRecord.PageContentTypeName) ? repoRecord.PageContentTypeName : WellKnownConstants.DefaultRepoPageContentType;
 
             // This won't scale, but works fine up to a couple hundred pages.
             var pages = _contentManager
@@ -213,7 +233,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
         {
             var repository = _repository.Get(id);
             if (repository == null) throw new ArgumentException("No repository exists with the following id: " + id);
-            return  repository;
+            return repository;
         }
     }
 }
