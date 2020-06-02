@@ -48,7 +48,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             var repoData = GetRepositoryDataOrThrow(repositoryId);
             var repoSettings = new BitbucketRepositorySettings(repoData, _encryptionService);
 
-            var lastChangeset = _apiService.FetchFromRepo<CommitsResponse>(repoSettings, "commits/default").Values.FirstOrDefault();
+            var lastChangeset = _apiService.FetchFromRepo<CommitsResponse>(repoSettings, "commits/master").Values.FirstOrDefault();
 
             if (lastChangeset == null) return;
 
@@ -113,7 +113,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
             }
 
             var commits = _apiService
-                .FetchFromRepo<CommitsResponse>(new BitbucketRepositorySettings(repoData, _encryptionService), "commits/default")
+                .FetchFromRepo<CommitsResponse>(new BitbucketRepositorySettings(repoData, _encryptionService), "commits/master")
                 .Values;
 
             // So the oldest ones are at the top.
