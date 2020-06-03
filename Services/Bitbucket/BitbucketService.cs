@@ -139,7 +139,7 @@ namespace OrchardHUN.ExternalPages.Services.Bitbucket
                 var diffStats = _apiService
                     .FetchFromRepo<DiffStat>(new BitbucketRepositorySettings(repoData, _encryptionService), "diffstat/" + commit.Hash)
                     .Values;
-                var diffs = diffStats.Where(diffStat => urlMappings.Any(mapping => diffStat.New.Path.StartsWith(mapping.RepoPath)));
+                var diffs = diffStats.Where(diffStat => urlMappings.Any(mapping => diffStat.New?.Path.StartsWith(mapping.RepoPath) == true));
                 var diffCount = diffs.Count();
 
                 if (diffCount != 0)
