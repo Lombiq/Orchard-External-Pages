@@ -106,10 +106,10 @@
     <Content Include="Placement.info">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="compilerconfig.json" />
-    <None Include="compilerconfig.json.defaults">
+    <Content Include="compilerconfig.json" />
+    <Content Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
-    </None>
+    </Content>
     <None Include="Licence.md" />
     <None Include="Styles\orchardhun-externalpages-bitbucket.less" />
     <Content Include="Styles\orchardhun-externalpages-bitbucket.css">
@@ -234,6 +234,6 @@
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
